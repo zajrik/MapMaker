@@ -23,34 +23,35 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 	local heightBox
 	local widthBox
 
+	local dir = love.filesystem.getSaveDirectory()
+
 	-- Read settings file, create one if it doesn't exist
 	function this.Read()
 		-- Create initial settings file with defaults
 		if not love.filesystem.exists('MapMaker.settings') then
 			this.Write(8, 8)
-
+			this.Read()
 		-- Read settings file
 		else
-			local settings = io.open('MapMaker.settings', 'r')
 			local height, width
-			for line in settings:lines() do
+			for line in love.filesystem.lines('MapMaker.settings') do
 				if line:match('height:%d+') then
 					this.gridH = tonumber(line:match('%d+'))
 				elseif line:match('width:%d+') then
 					this.gridW = tonumber(line:match('%d+'))
 				end
 			end
-			settings:close()
 		end
 		return this.gridH, this.gridW
 	end
 
 	-- Write to settings file
 	function this.Write(h, w)
-		local settingsFile = io.open('MapMaker.settings', 'w')
 		local settingsString = string.format('height:%d\nwidth:%d', h, w)
-		settingsFile:write(settingsString)
-		settingsFile:close()
+		local settings, errorstr = love.filesystem.newFile('MapMaker.settings')
+		settings:open('w')
+		settings:write(settingsString)
+		settings:close()
 	end
 
 
@@ -73,8 +74,8 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 		this.winW = love.window.getWidth()
 
 		-- UI darken overlay
-		-- love.graphics.setColor(0, 0, 0, 200)
-		-- love.graphics.rectangle('fill', 0, 0, this.winW, this.winH)
+		love.graphics.setColor(0, 0, 0, 200)
+		love.graphics.rectangle('fill', 0, 0, this.winW, this.winH)
 
 		-- Draw diaglog box
 		love.graphics.setColor(0, 0, 0, 255)
