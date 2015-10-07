@@ -1,6 +1,6 @@
 -- @namespace MapMaker
--- @class TextBox: Class description
-local MapMaker = {}; function MapMaker.newTextBox(x, y, width)
+-- @class TextBox: A simple textbox implementation
+local MapMaker = {}; function MapMaker.newTextBox(value, x, y, width)
 	
 	-- Constructor
 	local this = 
@@ -8,11 +8,11 @@ local MapMaker = {}; function MapMaker.newTextBox(x, y, width)
 		x = x,
 		y = y,
 		width = width,
-		value = 8,
+		value = value,
 		selected = false
 	}
 
-	--local selected = false
+	local utf8 = require 'utf8'
 
 	-- Handle display of the text box
 	function this.Show()
@@ -34,11 +34,27 @@ local MapMaker = {}; function MapMaker.newTextBox(x, y, width)
 		else
 			this.selected = false
 		end
-	end	
+	end
+
+	-- Handle text input
+	function this.textinput(text)
+		if text:match('%d') and string.len(this.value) < 2 then
+			this.value = this.value..text
+		end
+	end
+
+	-- Handle key press
+	function this.keypressed(key)
+		if key == 'backspace' then
+			local offset = utf8.offset(this.value, -1)
+
+			if offset then
+				this.value = string.sub(this.value, 1, offset - 1)
+			end
+		end
+	end
 
 	return this
 end
-
-
 
 return MapMaker

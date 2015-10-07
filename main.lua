@@ -5,68 +5,73 @@ icon = love.graphics.newImage('icon.png')
 iconData = icon:getData()
 love.window.setIcon(iconData)
 
-local settings = require 'settingsdialog'
+local settingsDialog = require 'settingsdialog'
 local text = require 'textbox'
 local btn = require 'button'
-local foo = require 'test'
-
-local h = 8
-local w = 8
 
 local blockSize = 30
 
-love.window.setMode(w * blockSize, h * blockSize + 25)
+local settings
+local exportButton
+local settingsButton
 
-local settings = settings.newSettingsDialog()
-local exportButton = btn.newButton('Export', 0, toCell(h), toCell(w) / 2)
-local settingsButton = btn.newButton('Settings', toCell(w) / 2 + 1, toCell(h), toCell(w)/2)
+local settingsSet
 
--- Resize the window
-function resizeWindow()
-	h = settings.dimH
-	w = settings.dimW
+local startY, startX, startSet
+local finishY, finishX, finishSet
+
+local clickY, clickX
+local rclickY, rclickX
+
+local exportClick
+
+local map
+
+function love.load()
+	settingsSet = true
+
+	startY = 0
+	startX = 0
+	startSet = false
+
+	finishY = 1
+	finishX = 1
+	finishSet = false
+
+	clickY = 0
+	clickX = 0
+
+	rclickY = 0
+	rclickX = 0
+
+	exportClick = false
+
+	settings = settingsDialog.newSettingsDialog()
+
+	-- Get height, width from settings file
+	h, w = settings.Read()
+
+	-- Bottom buttons
+	exportButton = btn.newButton('Export', 0, toCell(h), toCell(w) / 2)
+	settingsButton = btn.newButton('Settings', toCell(w) / 2 + 1, toCell(h), toCell(w)/2)
+
+	-- Set window size for the grid and bottom buttons
 	love.window.setMode(w * blockSize, h * blockSize + 25)
-end
 
-resizeWindow()
-
-local settingsSet = true
-local resized = true
-
-local startY = 0
-local startX = 0
-local startSet = false
-
-local finishY = 1
-local finishX = 1
-local finishSet = false
-
-local clickY = 0
-local clickX = 0
-
-local rclickY = 0
-local rclickX = 0
-
-local exportClick = false
-
-
-
--- Build empty map
-local map = {}
-for y = 1, h do
-	map[y] = {}
-	for x = 1, w do
-		map[y][x] = '.'
+	-- Build empty map
+	map = {}
+	for y = 1, h do
+		map[y] = {}
+		for x = 1, w do
+			map[y][x] = '.'
+		end
 	end
 end
 
--- 255 255 255 255 white
--- 226 226 226 255 grayish
 
 -- Draw all the things, constantly, forever
 function love.draw()
 	love.graphics.setFont(font)
-
 	-- Draw background grid
 	local count = 1
 	local moveX = 0
@@ -92,8 +97,8 @@ function love.draw()
 	if startSet then
 		love.graphics.setColor(0, 255, 0, 255)
 		love.graphics.rectangle('fill', 
-			toCell(toGridCoord(clickX)),--(math.floor(clickX / 30)) * 30, 
-			toCell(toGridCoord(clickY)),--(math.floor(clickY / 30)) * 30, 
+			toCell(toGridCoord(clickX)),
+			toCell(toGridCoord(clickY)),
 			blockSize, blockSize)
 	end
 
@@ -140,13 +145,6 @@ end
 -- Make a coord fit a cell
 function toCell(number)
 	return number * blockSize
-end
-
--- Resize the window
-function resizeWindow()
-	h = settings.dimH
-	w = settings.dimW
-	love.window.setMode(w * blockSize, h * blockSize + 25)
 end
 
 -- Center a character within a grid cell, set its background color
@@ -218,16 +216,12 @@ end
 -- Mouse pressed event listener
 function love.mousepressed(x, y, button)
 	settings.mousepressed(x, y, button)
-	-- heightBox.mousepressed(x, y, button)
-	-- widthBox.mousepressed(x, y, button)
-	--exportButton.mousepressed(x, y, button)
 	-- Left click
 	if button == 'l' then
 		if settingsSet then
 			-- Send out valid mouse events to component objects
 			exportButton.mousepressed(x, y, button)
 			settingsButton.mousepressed(x, y, button)
-
 
             -- Clicked out of bounds
 			if x > w * blockSize
@@ -236,8 +230,8 @@ function love.mousepressed(x, y, button)
 			-- Clicked grid
 			else clickX = x; clickY = y end
 
-			startX = toMapCoord(clickX)--(math.floor(clickX / 30)) + 1
-			startY = toMapCoord(clickY)--(math.floor(clickY / 30)) + 1
+			startX = toMapCoord(clickX)
+			startY = toMapCoord(clickY)
 
 			if not exportButton.active and not settingsButton.active
 				then startSet = true end
@@ -261,13 +255,13 @@ function love.mousepressed(x, y, button)
 		else rclickX = x; rclickY = y end
 
 		-- Clicked the start cell, remove it
-		if toMapCoord(x) == startX--(math.floor(x / 30)) + 1 == startX 
-			and toMapCoord(y) == startY--(math.floor(y / 30)) + 1 == startY 
+		if toMapCoord(x) == startX
+			and toMapCoord(y) == startY
 				then startSet = false end
 
 		-- Clicked the finish sell, remove it
-		if toMapCoord(x) == finishX--(math.floor(x / 30)) + 1 == finishX 
-			and toMapCoord(y) == finishY--(math.floor(y / 30)) + 1 == finishY
+		if toMapCoord(x) == finishX
+			and toMapCoord(y) == finishY
 				then finishSet = false end
 
 		-- Clicked any cell, remove it
@@ -298,29 +292,41 @@ end
 -- Key press event listener
 function love.keypressed(key)
 	-- Handle map move direction input keys
-	local x, y = love.mouse.getPosition()
-	if key == 'w' then
-		map[toMapCoord(y)][toMapCoord(x)] = '^'
-	elseif key == 'd' then
-		map[toMapCoord(y)][toMapCoord(x)] = '>'
-	elseif key == 's' then
-		map[toMapCoord(y)][toMapCoord(x)] = 'v'
-	elseif key == 'a' then
-		map[toMapCoord(y)][toMapCoord(x)] = '<'
-	elseif key == 'x' then
-		if finishSet then
-			map[finishY][finishX] = '.'
-			print(finishY..', '..finishX)
-			map[toMapCoord(y)][toMapCoord(x)] = '*'
-			print(toMapCoord(y)..', '..toMapCoord(x))
-			finishY = toMapCoord(y)
-			finishX = toMapCoord(x)			
-		else
-			map[toMapCoord(y)][toMapCoord(x)] = '*'
-			finishY = toMapCoord(y)
-			finishX = toMapCoord(x)
-			finishSet = true
+	if settingsSet then
+		local x, y = love.mouse.getPosition()
+		if key == 'w' then
+			map[toMapCoord(y)][toMapCoord(x)] = '^'
+		elseif key == 'd' then
+			map[toMapCoord(y)][toMapCoord(x)] = '>'
+		elseif key == 's' then
+			map[toMapCoord(y)][toMapCoord(x)] = 'v'
+		elseif key == 'a' then
+			map[toMapCoord(y)][toMapCoord(x)] = '<'
+		elseif key == 'x' then
+			if finishSet then
+				map[finishY][finishX] = '.'
+				print(finishY..', '..finishX)
+				map[toMapCoord(y)][toMapCoord(x)] = '*'
+				print(toMapCoord(y)..', '..toMapCoord(x))
+				finishY = toMapCoord(y)
+				finishX = toMapCoord(x)			
+			else
+				map[toMapCoord(y)][toMapCoord(x)] = '*'
+				finishY = toMapCoord(y)
+				finishX = toMapCoord(x)
+				finishSet = true
+			end
 		end
+	end
+	if not settingsSet then
+		settings.keypressed(key)
+	end
+end
+
+-- Handle text input
+function love.textinput(text)
+	if not settingsSet then
+		settings.textinput(text)
 	end
 end
 
