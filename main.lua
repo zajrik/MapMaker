@@ -9,7 +9,7 @@ local settingsDialog = require 'settingsdialog'
 local text = require 'textbox'
 local btn = require 'button'
 
-local blockSize = 30
+local cellSize = 30
 
 local settings
 local exportButton
@@ -56,7 +56,7 @@ function love.load()
 	settingsButton = btn.newButton('Settings', toCell(w) / 2 + 1, toCell(h), toCell(w)/2)
 
 	-- Set window size for the grid and bottom buttons
-	love.window.setMode(w * blockSize, h * blockSize + 25)
+	love.window.setMode(w * cellSize, h * cellSize + 25)
 
 	-- Build empty map
 	map = {}
@@ -85,12 +85,12 @@ function love.draw()
 				if i % 2 ~= 0 then love.graphics.setColor(240, 240, 240, 255)
 				else love.graphics.setColor(255, 255, 255, 255) end
 			end
-			love.graphics.rectangle('fill', moveX , moveY, 30, 30)
-			moveX = moveX + 30
+			love.graphics.rectangle('fill', moveX , moveY, cellSize, cellSize)
+			moveX = moveX + cellSize
 		end
 		count = count + 1
 		moveX = 0
-		moveY = moveY + 30
+		moveY = moveY + cellSize
 	end
 
 	-- Draw chosen start coord cell
@@ -99,7 +99,7 @@ function love.draw()
 		love.graphics.rectangle('fill', 
 			toCell(toGridCoord(clickX)),
 			toCell(toGridCoord(clickY)),
-			blockSize, blockSize)
+			cellSize, cellSize)
 	end
 
 	-- Draw bottom buttons
@@ -118,7 +118,7 @@ function love.draw()
 		end
 	end
 
-	-- Layer dimension input screen on top, centered on grid vertically
+	-- Layer settings dialog on top, centered on grid vertically/horizontally
 	if settings.settingsChosen then
 		settingsSet = true
 	end
@@ -134,17 +134,17 @@ end
 
 -- Make number fit a map coord (1-index)
 function toMapCoord(number)
-	return math.floor((number / blockSize) + 1)
+	return math.floor((number / cellSize) + 1)
 end
 
 -- Make number fit a grid coord (0-index)
 function toGridCoord(number)
-	return math.floor((number / blockSize))
+	return math.floor((number / cellSize))
 end
 
 -- Make a coord fit a cell
 function toCell(number)
-	return number * blockSize
+	return number * cellSize
 end
 
 -- Center a character within a grid cell, set its background color
@@ -156,7 +156,7 @@ function blockText(text, y, x)
 		love.graphics.setColor(223, 229, 123, 255)
 	end
 	love.graphics.rectangle(
-		'fill', toCell(x - 1), toCell(y - 1), blockSize, blockSize)
+		'fill', toCell(x - 1), toCell(y - 1), cellSize, cellSize)
 	love.graphics.setColor(0, 0, 0, 255)
 	love.graphics.print(text, toCell(x - 1) + 10, toCell(y - 1) + 5 )
 end
@@ -213,6 +213,8 @@ function ExportMap()
 	end
 end
 
+
+
 -- Mouse pressed event listener
 function love.mousepressed(x, y, button)
 	settings.mousepressed(x, y, button)
@@ -224,8 +226,8 @@ function love.mousepressed(x, y, button)
 			settingsButton.mousepressed(x, y, button)
 
             -- Clicked out of bounds
-			if x > w * blockSize
-				or y > h * blockSize then
+			if x > w * cellSize
+				or y > h * cellSize then
 
 			-- Clicked grid
 			else clickX = x; clickY = y end
@@ -248,8 +250,8 @@ function love.mousepressed(x, y, button)
 	-- Right click
 	if button == 'r' then
 		-- Clicked out of bounds
-		if x > w * blockSize 
-			or y > h * blockSize then
+		if x > w * cellSize 
+			or y > h * cellSize then
 
 		-- Clicked grid
 		else rclickX = x; rclickY = y end
@@ -282,6 +284,9 @@ function love.mousereleased(x, y, button)
 			settings.settingsChosen = false
 			settingsSet = false
 			settingsButton.clicked = false
+
+			-- Select first text box
+			settings.TabSelect()
 		end
 	end
 	if not settingsSet then
@@ -318,6 +323,7 @@ function love.keypressed(key)
 			end
 		end
 	end
+	-- Send keys to settings dialog
 	if not settingsSet then
 		settings.keypressed(key)
 	end

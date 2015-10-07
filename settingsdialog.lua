@@ -1,5 +1,5 @@
 -- @namespace MapMaker
--- @class DimensionDialog: Class description
+-- @class SettingsDialog: Class description
 --font = love.graphics.newFont("SourceCodePro-Regular.ttf", 14)
 local MapMaker = {}; function MapMaker.newSettingsDialog()
 	
@@ -37,11 +37,8 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 			for line in settings:lines() do
 				if line:match('height:%d+') then
 					this.gridH = tonumber(line:match('%d+'))
-					--print(this.gridH)
-					--print(height)
 				elseif line:match('width:%d+') then
 					this.gridW = tonumber(line:match('%d+'))
-					--print(this.gridW)
 				end
 			end
 			settings:close()
@@ -95,6 +92,17 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 
 
 
+	-- Select text boxes with tabs
+	function this.TabSelect()
+		if heightBox.selected then
+			heightBox.selected = false
+			widthBox.selected = true
+		else
+			heightBox.selected = true
+			widthBox.selected = false
+		end
+	end
+
 	-- Handle mouse press
 	function this.mousepressed(x, y, button)
 		heightBox.mousepressed(x, y, button)
@@ -106,14 +114,24 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 	function this.mousereleased(x, y, button)
 		confirmButton.mousereleased(x, y, button)
 		if confirmButton.clicked then
-			this.settingsChosen = true
-			confirmButton.clicked = false
-			this.Write(heightBox.value, widthBox.value)
+			if tonumber(heightBox.value) >= 8 and tonumber(heightBox.value) <= 25
+			and tonumber(widthBox.value) >= 8 and tonumber(widthBox.value) <= 25 then
+				this.settingsChosen = true
+				confirmButton.clicked = false
+				this.Write(heightBox.value, widthBox.value)
 
-			-- Force reload of all components. Will set grid/window dimensions
-			-- and allow all UI elements to have their position/dimension values
-			-- recalculated appropriately
-			love.load()
+				-- Force reload of all components. Will set grid/window dimensions
+				-- and allow all UI elements to have their position/dimension values
+				-- recalculated appropriately
+				love.load()
+			else
+				confirmButton.clicked = false
+				local buttons = {'OK'}
+				local alert = love.window.showMessageBox(
+					'Alert',
+					'Grid height and width must be between 8 and 25.',
+					buttons)
+			end
 		end
 	end
 
@@ -128,6 +146,13 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 
 	-- Handle key press
 	function this.keypressed(key)
+		if key == 'tab' then
+			this.TabSelect()
+		end
+		if key == 'return' then
+			-- Simulate confirm button click
+			this.mousereleased(confirmButton.x + 1, confirmButton.y + 1, 'l')
+		end
 		if heightBox.selected then
 			heightBox.keypressed(key)
 		elseif widthBox.selected then
