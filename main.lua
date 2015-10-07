@@ -9,6 +9,8 @@ local settingsDialog = require 'settingsdialog'
 local text = require 'textbox'
 local btn = require 'button'
 
+local mapChecker = require 'mapchecker'
+
 local cellSize = 30
 
 local settings
@@ -181,7 +183,22 @@ function ExportMap()
 				end
 			end
 		end
-		allowExport = true
+		local check = mapChecker.newMapChecker(h, w, startY, startX)
+		if check.CheckMap(map) then
+			allowExport = true
+		else
+			allowExport = false
+			local buttons = {'OK'}
+			local alert = love.window.showMessageBox(
+				'Alert',
+				[[MapChecker could not find a valid direction path.
+Please make sure there is a complete path from start to
+finish.
+
+Note: paths can not cross the same cell more than once.]],
+				buttons
+			)
+		end
 	elseif startSet and not finishSet then
 		local buttons = {'OK'}
 		local alert = love.window.showMessageBox(

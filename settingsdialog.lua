@@ -130,7 +130,8 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 				local alert = love.window.showMessageBox(
 					'Alert',
 					'Grid height and width must be between 8 and 25.',
-					buttons)
+					buttons
+				)
 			end
 		end
 	end
