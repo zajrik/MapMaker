@@ -73,14 +73,14 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 		this.winW = love.window.getWidth()
 
 		-- UI darken overlay
-		love.graphics.setColor(0, 0, 0, 200)
-		love.graphics.rectangle('fill', 0, 0, this.winW, this.winH)
+		-- love.graphics.setColor(0, 0, 0, 200)
+		-- love.graphics.rectangle('fill', 0, 0, this.winW, this.winH)
 
 		-- Draw diaglog box
-		love.graphics.setColor(200, 200, 200, 255)
-		love.graphics.rectangle('fill', this.x, this.y, this.width, this.height)
 		love.graphics.setColor(0, 0, 0, 255)
-		love.graphics.rectangle('line', this.x, this.y, this.width, this.height)
+		love.graphics.rectangle('fill', this.x, this.y, this.width, this.height)
+		love.graphics.setColor(200, 200, 200, 255)
+		love.graphics.rectangle('fill', this.x+1, this.y+1, this.width-2, this.height-2)
 		love.graphics.setColor(0, 0, 0, 255)
 		love.graphics.print('Height', this.x + 15, this.y + 1)
 		love.graphics.print('Width', this.x + 89, this.y + 1)
