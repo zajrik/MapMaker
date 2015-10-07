@@ -127,8 +127,9 @@ function love.draw()
 	end
 
 	-- Print coords on screen
+	local mouseX, mouseY = love.mouse.getPosition()
 	love.graphics.setColor(0, 0, 0, 255)
-	love.graphics.print(toMapCoord(clickY)..','..toMapCoord(clickX), 3, toCell(h)-20)
+	love.graphics.print(toMapCoord(mouseY)..','..toMapCoord(mouseX), 3, toCell(h)-20)
 
 end
 
