@@ -1,6 +1,5 @@
 -- @namespace MapMaker
--- @class SettingsDialog: Class description
---font = love.graphics.newFont("SourceCodePro-Regular.ttf", 14)
+-- @class SettingsDialog: Create a dialog window for setting grid height/width
 local MapMaker = {}; function MapMaker.newSettingsDialog()
 	
 	-- Constructor

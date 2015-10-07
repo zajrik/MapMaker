@@ -1,5 +1,5 @@
 -- @namespace MapMaker
--- @class Button: Class description
+-- @class Button: A clickable button
 font = love.graphics.newFont("SourceCodePro-Regular.ttf", 14)
 local MapMaker = {}; function MapMaker.newButton(text, x, y, width)
 	
@@ -29,14 +29,12 @@ local MapMaker = {}; function MapMaker.newButton(text, x, y, width)
 			(this.width / 2) - (font:getWidth(text) / 2) + this.x, 
 			this.y + (font:getHeight()/6)
 		)
-		--print(this.width..' '..font:getWidth(text))
 	end
 
 	-- Handle mouse press
 	function this.mousepressed(x, y, button)
 		if x > this.x and x < this.x + width and y > this.y and y < this.y + 25 then
 			this.active = true
-			--print('buh')
 		else
 			this.active = false
 		end
@@ -47,7 +45,7 @@ local MapMaker = {}; function MapMaker.newButton(text, x, y, width)
 		this.active = false
 		if x > this.x and x < this.x + width and y > this.y and y < this.y + 25 then
 			this.clicked = true
-			print('clicked: '..this.text)
+			--print('clicked: '..this.text)
 		end
 	end
 	return this

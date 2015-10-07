@@ -10,6 +10,7 @@ local text = require 'textbox'
 local btn = require 'button'
 
 local mapChecker = require 'mapchecker'
+local mapExporter = require 'mapexporter'
 
 local cellSize = 30
 
@@ -108,14 +109,14 @@ function love.draw()
 	exportButton.Show()
 	settingsButton.Show()
 
-	-- Draw movement markers.
+	-- Draw movement markers
 	for y = 1, #map do
 		for x = 1, #map[y] do
-			if     map[y][x] == '^' then blockText('^', y, x)
-			elseif map[y][x] == '>' then blockText('>', y, x)
-			elseif map[y][x] == 'v' then blockText('v', y, x)
-			elseif map[y][x] == '<' then blockText('<', y, x)
-			elseif map[y][x] == '*' then blockText('*', y, x)
+			if     map[y][x] == '^' then cellText('^', y, x)
+			elseif map[y][x] == '>' then cellText('>', y, x)
+			elseif map[y][x] == 'v' then cellText('v', y, x)
+			elseif map[y][x] == '<' then cellText('<', y, x)
+			elseif map[y][x] == '*' then cellText('*', y, x)
 			end
 		end
 	end
@@ -152,7 +153,7 @@ end
 
 -- Center a character within a grid cell, set its background color
 -- Takes in map coords but they need to be grid coords, so subtract 1
-function blockText(text, y, x)
+function cellText(text, y, x)
 	if startX == x and startY == y and startSet then 
 		love.graphics.setColor(0, 255, 0, 255)
 	else
@@ -162,73 +163,6 @@ function blockText(text, y, x)
 		'fill', toCell(x - 1), toCell(y - 1), cellSize, cellSize)
 	love.graphics.setColor(0, 0, 0, 255)
 	love.graphics.print(text, toCell(x - 1) + 10, toCell(y - 1) + 5 )
-end
-
--- Export the map
-function ExportMap()
-	local mapBuilder, allowExport
-	if startSet and finishSet then
-		mapBuilder = ''
-		mapBuilder = mapBuilder..string.format(
-			'! h:%d; w:%d; sx:%d; sy:%d\n',
-			h, w, startY, startX)
-		for y = 1, #map do
-			for x = 1, #map[y] do
-				if x ~= #map[y] then
-					mapBuilder = mapBuilder..map[y][x]..','
-				elseif x == #map[y] and y == #map then
-					mapBuilder = mapBuilder..map[y][x]
-				elseif x == #map[y] then
-					mapBuilder = mapBuilder..map[y][x]..'\n'
-				end
-			end
-		end
-		local check = mapChecker.newMapChecker(h, w, startY, startX)
-		if check.CheckMap(map) then
-			allowExport = true
-		else
-			allowExport = false
-			local buttons = {'OK'}
-			local alert = love.window.showMessageBox(
-				'Alert',
-				[[MapChecker could not find a valid direction path.
-Please make sure there is a complete path from start to
-finish.
-
-Note: paths can not cross the same cell more than once.]],
-				buttons
-			)
-		end
-	elseif startSet and not finishSet then
-		local buttons = {'OK'}
-		local alert = love.window.showMessageBox(
-			'Alert', 
-			'You need to set a finish before the map can be exported.',
-			buttons
-		)
-		allowExport = false
-	elseif not startSet and finishSet then
-		local buttons = {'OK'}
-		local alert = love.window.showMessageBox(
-			'Alert', 
-			'You need to set a starting point before the map can be exported.',
-			buttons
-		)
-		allowExport = false
-	elseif not startSet and not finishSet then
-		local buttons = {'OK'}
-		local alert = love.window.showMessageBox(
-			'Alert', 
-			'You need to set a start and finish before the map can be exported.',
-			buttons
-		)
-		allowExport = false
-	end
-	if allowExport then
-		local generatedMap = io.open('generatedMap.map', 'w')
-		generatedMap:write(mapBuilder)
-		generatedMap:close()
-	end
 end
 
 
@@ -295,7 +229,8 @@ function love.mousereleased(x, y, button)
 		exportButton.mousereleased(x, y, button)
 		settingsButton.mousereleased(x, y, button)
 		if exportButton.clicked then
-			ExportMap()
+			local exporter = mapExporter.newMapExporter()
+			exporter.ExportMap(map, h, w, startY, startX, startSet, finishSet)
 			exportButton.clicked = false
 		end
 		if settingsButton.clicked then

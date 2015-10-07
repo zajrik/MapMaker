@@ -21,6 +21,7 @@ local MapMaker = {}; function MapMaker.newMapChecker(mapHeight, mapWidth, startX
 		HOME  = 5
 	}
 
+	-- Start at start point, follow path, return true/false for valid/invalid map
 	function this.CheckMap(map)
 
 		local x, y
