@@ -23,8 +23,6 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 	local heightBox
 	local widthBox
 
-	local dir = love.filesystem.getSaveDirectory()
-
 	-- Read settings file, create one if it doesn't exist
 	function this.Read()
 		-- Create initial settings file with defaults

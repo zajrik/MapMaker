@@ -1,5 +1,8 @@
 -- @namespace MapMaker
--- @class MapChecker: Check map for valid path
+-- @class MapChecker: 
+-- Check map for valid path. If there are any problems with the map prior
+-- to parsing that primary logic misses, MapChecker will catch it. 
+-- Nothing gets past MapChecker. (At least not in testing.)
 local MapMaker = {}; function MapMaker.newMapChecker(mapHeight, mapWidth, startX, startY)
 	
 	-- Constructor

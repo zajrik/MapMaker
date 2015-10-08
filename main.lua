@@ -6,10 +6,10 @@ iconData = icon:getData()
 love.window.setIcon(iconData)
 
 local settingsDialog = require 'settingsdialog'
-local text = require 'textbox'
-local btn = require 'button'
+local text           = require 'textbox'
+local button         = require 'button'
 
-local mapChecker = require 'mapchecker'
+local mapChecker  = require 'mapchecker'
 local mapExporter = require 'mapexporter'
 
 local cellSize = 30
@@ -37,8 +37,8 @@ function love.load()
 	startX = 0
 	startSet = false
 
-	finishY = 1
-	finishX = 1
+	finishY = 0
+	finishX = 0
 	finishSet = false
 
 	clickY = 0
@@ -55,8 +55,8 @@ function love.load()
 	h, w = settings.Read()
 
 	-- Bottom buttons
-	exportButton = btn.newButton('Export', 0, toCell(h), toCell(w) / 2)
-	settingsButton = btn.newButton('Settings', toCell(w) / 2 + 1, toCell(h), toCell(w)/2)
+	exportButton = button.newButton('Export', 0, toCell(h), toCell(w) / 2)
+	settingsButton = button.newButton('Settings', toCell(w) / 2 + 1, toCell(h), toCell(w)/2)
 
 	-- Set window size for the grid and bottom buttons
 	love.window.setMode(w * cellSize, h * cellSize + 25)
@@ -151,6 +151,14 @@ function toCell(number)
 	return number * cellSize
 end
 
+-- Check if direction cell overwrites finish cell, overwrite it if so
+function checkCell(x, y)
+	if toMapCoord(x) == finishX
+		and toMapCoord(y) == finishY
+			then finishSet = false 
+			finishY = 0; finishX = 0 end
+end
+
 -- Center a character within a grid cell, set its background color
 -- Takes in map coords but they need to be grid coords, so subtract 1
 function cellText(text, y, x)
@@ -213,7 +221,7 @@ function love.mousepressed(x, y, button)
 			and toMapCoord(y) == startY
 				then startSet = false end
 
-		-- Clicked the finish sell, remove it
+		-- Clicked the finish cell, remove it
 		if toMapCoord(x) == finishX
 			and toMapCoord(y) == finishY
 				then finishSet = false end
@@ -254,12 +262,16 @@ function love.keypressed(key)
 		local x, y = love.mouse.getPosition()
 		if key == 'w' then
 			map[toMapCoord(y)][toMapCoord(x)] = '^'
+			checkCell(x, y)
 		elseif key == 'd' then
 			map[toMapCoord(y)][toMapCoord(x)] = '>'
+			checkCell(x, y)
 		elseif key == 's' then
 			map[toMapCoord(y)][toMapCoord(x)] = 'v'
+			checkCell(x, y)
 		elseif key == 'a' then
 			map[toMapCoord(y)][toMapCoord(x)] = '<'
+			checkCell(x, y)
 		elseif key == 'x' then
 			if finishSet then
 				map[finishY][finishX] = '.'

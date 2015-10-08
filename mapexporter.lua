@@ -1,5 +1,5 @@
 -- @namespace MapMaker
--- @class MapExporter: Class description
+-- @class MapExporter: Export the drawn map to .map file
 local MapMaker = {}; function MapMaker.newMapExporter()
 	
 	-- Constructor
