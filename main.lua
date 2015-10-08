@@ -15,9 +15,9 @@ local mapExporter = require 'mapexporter'
 local cellSize = 30
 
 local settings
-local exportButton
-local settingsButton
-local clearButton
+local button_export
+local button_clear
+local button_settings
 
 local settingsSet
 
@@ -56,11 +56,11 @@ function love.load()
 	h, w = settings.Read()
 
 	-- Bottom buttons
-	exportButton = button.newButton(
+	button_export = button.newButton(
 		'Export', 0, toCell(h), toCell(w) / 2)
-	clearButton = button.newButton(
+	button_clear = button.newButton(
 		'Clear', toCell(w) / 2 + 1, toCell(h), toCell(w)/2)
-	settingsButton = button.newButton(
+	button_settings = button.newButton(
 		'Settings', 0, toCell(h) + 26, toCell(w))
 
 	-- Set window size for the grid and bottom buttons
@@ -111,9 +111,9 @@ function love.draw()
 	end
 
 	-- Draw bottom buttons
-	exportButton.Show()
-	settingsButton.Show()
-	clearButton.Show()
+	button_export.Show()
+	button_settings.Show()
+	button_clear.Show()
 
 	-- Draw movement markers
 	for y = 1, #map do
@@ -192,9 +192,9 @@ function love.mousepressed(x, y, button)
 		settings.mousepressed(x, y, button)
 		if settingsSet then
 			-- Send out valid mouse events to component objects
-			exportButton.mousepressed(x, y, button)
-			settingsButton.mousepressed(x, y, button)
-			clearButton.mousepressed(x, y, button)
+			button_export.mousepressed(x, y, button)
+			button_settings.mousepressed(x, y, button)
+			button_clear.mousepressed(x, y, button)
 
             -- Clicked out of bounds
 			if x > w * cellSize
@@ -206,8 +206,8 @@ function love.mousepressed(x, y, button)
 			startX = toMapCoord(clickX)
 			startY = toMapCoord(clickY)
 
-			if not exportButton.active and not settingsButton.active
-				and not clearButton.active then startSet = true end
+			if not button_export.active and not button_settings.active
+				and not button_clear.active then startSet = true end
 
 			-- Debug msg
 			-- if startSet then
@@ -245,24 +245,24 @@ end
 -- Mouse released event listener
 function love.mousereleased(x, y, button)
 	if settingsSet then
-		exportButton.mousereleased(x, y, button)
-		settingsButton.mousereleased(x, y, button)
-		clearButton.mousereleased(x, y, button)
-		if exportButton.clicked then
+		button_export.mousereleased(x, y, button)
+		button_settings.mousereleased(x, y, button)
+		button_clear.mousereleased(x, y, button)
+		if button_export.clicked then
 			local exporter = mapExporter.newMapExporter()
 			exporter.ExportMap(map, h, w, startY, startX, startSet, finishSet)
-			exportButton.clicked = false
+			button_export.clicked = false
 		end
-		if settingsButton.clicked then
+		if button_settings.clicked then
 			settings.settingsChosen = false
 			settingsSet = false
-			settingsButton.clicked = false
+			button_settings.clicked = false
 
 			-- Select first text box
 			settings.TabSelect()
 		end
-		if clearButton.clicked then
-			clearButton.clicked = false
+		if button_clear.clicked then
+			button_clear.clicked = false
 			love.load()
 		end
 	end

@@ -20,8 +20,8 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 	local btn = require 'button'
 
 	local x, y
-	local heightBox
-	local widthBox
+	local textbox_height
+	local textbox_width
 
 	-- Read settings file, create one if it doesn't exist
 	function this.Read()
@@ -60,8 +60,8 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 	this.x = (((this.x / 2) * 30) - (this.width / 2))
 
 	-- Initialize text boxes and confirm button
-	local heightBox = text.newTextBox(valueY, this.x + 5, this.y + 20, 67)
-	local widthBox = text.newTextBox(valueX, this.x + this.width - 72, this.y + 20, 67)
+	local textbox_height = text.newTextBox(valueY, this.x + 5, this.y + 20, 67)
+	local textbox_width = text.newTextBox(valueX, this.x + this.width - 72, this.y + 20, 67)
 	local confirmButton = btn.newButton(
 		'OK', this.x + 10, this.y + this.height - 30, this.width - 20)
 
@@ -85,26 +85,26 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 		love.graphics.print('Width', this.x + 89, this.y + 1)
 
 		-- Show text boxes and button
-		heightBox.Show(); widthBox.Show(); confirmButton.Show()
+		textbox_height.Show(); textbox_width.Show(); confirmButton.Show()
 	end
 
 
 
 	-- Select text boxes with tabs
 	function this.TabSelect()
-		if heightBox.selected then
-			heightBox.selected = false
-			widthBox.selected = true
+		if textbox_height.selected then
+			textbox_height.selected = false
+			textbox_width.selected = true
 		else
-			heightBox.selected = true
-			widthBox.selected = false
+			textbox_height.selected = true
+			textbox_width.selected = false
 		end
 	end
 
 	-- Handle mouse press
 	function this.mousepressed(x, y, button)
-		heightBox.mousepressed(x, y, button)
-		widthBox.mousepressed(x, y, button)
+		textbox_height.mousepressed(x, y, button)
+		textbox_width.mousepressed(x, y, button)
 		confirmButton.mousepressed(x, y, button)
 	end
 
@@ -112,11 +112,11 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 	function this.mousereleased(x, y, button)
 		confirmButton.mousereleased(x, y, button)
 		if confirmButton.clicked then
-			if tonumber(heightBox.value) >= 8 and tonumber(heightBox.value) <= 25
-			and tonumber(widthBox.value) >= 8 and tonumber(widthBox.value) <= 25 then
+			if tonumber(textbox_height.value) >= 8 and tonumber(textbox_height.value) <= 25
+			and tonumber(textbox_width.value) >= 8 and tonumber(textbox_width.value) <= 25 then
 				this.settingsChosen = true
 				confirmButton.clicked = false
-				this.Write(heightBox.value, widthBox.value)
+				this.Write(textbox_height.value, textbox_width.value)
 
 				-- Force reload of all components. Will set grid/window dimensions
 				-- and allow all UI elements to have their position/dimension values
@@ -136,10 +136,10 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 
 	-- Handle text input
 	function this.textinput(text)
-		if heightBox.selected then
-			heightBox.textinput(text)
-		elseif widthBox.selected then
-			widthBox.textinput(text)
+		if textbox_height.selected then
+			textbox_height.textinput(text)
+		elseif textbox_width.selected then
+			textbox_width.textinput(text)
 		end
 	end
 
@@ -147,18 +147,17 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 	function this.keypressed(key)
 		if key == 'tab' then
 			this.TabSelect()
-		end
-		if key == 'return' then
+		elseif key == 'return' then
 			-- Simulate confirm button click
 			this.mousereleased(confirmButton.x + 1, confirmButton.y + 1, 'l')
-		end
-		if key == 'escape' then
+		elseif key == 'escape' then
 			this.settingsChosen = true
 		end
-		if heightBox.selected then
-			heightBox.keypressed(key)
-		elseif widthBox.selected then
-			widthBox.keypressed(key)
+		
+		if textbox_height.selected then
+			textbox_height.keypressed(key)
+		elseif textbox_width.selected then
+			textbox_width.keypressed(key)
 		end
 	end
 
