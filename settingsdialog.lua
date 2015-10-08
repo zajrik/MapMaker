@@ -152,6 +152,9 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 			-- Simulate confirm button click
 			this.mousereleased(confirmButton.x + 1, confirmButton.y + 1, 'l')
 		end
+		if key == 'escape' then
+			this.settingsChosen = true
+		end
 		if heightBox.selected then
 			heightBox.keypressed(key)
 		elseif widthBox.selected then
