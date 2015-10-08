@@ -162,9 +162,10 @@ function toCell(number)
 end
 
 -- Check if direction cell overwrites finish cell, overwrite it if so
+-- Requires numbers to be map coordinates
 function checkCell(x, y)
-	if toMapCoord(x) == finishX
-		and toMapCoord(y) == finishY
+	if x == finishX
+		and y == finishY
 			then finishSet = false 
 			finishY = 0; finishX = 0 end
 end
@@ -276,31 +277,28 @@ function love.keypressed(key)
 	-- Handle map move direction input keys
 	if settingsSet then
 		local x, y = love.mouse.getPosition()
-		if key == 'w' then
-			map[toMapCoord(y)][toMapCoord(x)] = '^'
-			checkCell(x, y)
-		elseif key == 'd' then
-			map[toMapCoord(y)][toMapCoord(x)] = '>'
-			checkCell(x, y)
-		elseif key == 's' then
-			map[toMapCoord(y)][toMapCoord(x)] = 'v'
-			checkCell(x, y)
-		elseif key == 'a' then
-			map[toMapCoord(y)][toMapCoord(x)] = '<'
-			checkCell(x, y)
-		elseif key == 'x' then
-			if finishSet then
-				map[finishY][finishX] = '.'
-				print(finishY..', '..finishX)
-				map[toMapCoord(y)][toMapCoord(x)] = '*'
-				print(toMapCoord(y)..', '..toMapCoord(x))
-				finishY = toMapCoord(y)
-				finishX = toMapCoord(x)			
-			else
-				map[toMapCoord(y)][toMapCoord(x)] = '*'
-				finishY = toMapCoord(y)
-				finishX = toMapCoord(x)
-				finishSet = true
+		local validPos = true
+		if toMapCoord(x) > w then validPos = false
+			else x = toMapCoord(x) end
+		if toMapCoord(y) > h then validPos = false
+			else y = toMapCoord(y) end
+		if validPos then
+			if     key == 'w' then map[y][y] = '^';	checkCell(x, y)
+			elseif key == 'd' then map[y][x] = '>'; checkCell(x, y)
+			elseif key == 's' then map[y][x] = 'v'; checkCell(x, y)
+			elseif key == 'a' then map[y][x] = '<'; checkCell(x, y)
+			elseif key == 'x' then
+				if finishSet then
+					map[finishY][finishX] = '.'
+					map[y][x] = '*'
+					finishY = y
+					finishX = x
+				else
+					map[y][x] = '*'
+					finishY = y
+					finishX = x
+					finishSet = true
+				end
 			end
 		end
 	end
