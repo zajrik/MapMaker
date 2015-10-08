@@ -17,6 +17,7 @@ local cellSize = 30
 local settings
 local exportButton
 local settingsButton
+local clearButton
 
 local settingsSet
 
@@ -55,11 +56,15 @@ function love.load()
 	h, w = settings.Read()
 
 	-- Bottom buttons
-	exportButton = button.newButton('Export', 0, toCell(h), toCell(w) / 2)
-	settingsButton = button.newButton('Settings', toCell(w) / 2 + 1, toCell(h), toCell(w)/2)
+	exportButton = button.newButton(
+		'Export', 0, toCell(h), toCell(w) / 2)
+	clearButton = button.newButton(
+		'Clear', toCell(w) / 2 + 1, toCell(h), toCell(w)/2)
+	settingsButton = button.newButton(
+		'Settings', 0, toCell(h) + 26, toCell(w))
 
 	-- Set window size for the grid and bottom buttons
-	love.window.setMode(w * cellSize, h * cellSize + 25)
+	love.window.setMode(w * cellSize, h * cellSize + 51)
 
 	-- Build empty map
 	map = {}
@@ -108,6 +113,7 @@ function love.draw()
 	-- Draw bottom buttons
 	exportButton.Show()
 	settingsButton.Show()
+	clearButton.Show()
 
 	-- Draw movement markers
 	for y = 1, #map do
@@ -131,8 +137,12 @@ function love.draw()
 
 	-- Print coords on screen
 	local mouseX, mouseY = love.mouse.getPosition()
+	if toMapCoord(mouseX) > w then mouseX = w
+		else mouseX = toMapCoord(mouseX) end
+	if toMapCoord(mouseY) > h then mouseY = h
+		else mouseY = toMapCoord(mouseY) end
 	love.graphics.setColor(0, 0, 0, 255)
-	love.graphics.print(toMapCoord(mouseY)..','..toMapCoord(mouseX), 3, toCell(h)-20)
+	love.graphics.print(mouseY..','..mouseX, 3, toCell(h)-20)
 
 end
 
@@ -177,13 +187,14 @@ end
 
 -- Mouse pressed event listener
 function love.mousepressed(x, y, button)
-	settings.mousepressed(x, y, button)
 	-- Left click
 	if button == 'l' then
+		settings.mousepressed(x, y, button)
 		if settingsSet then
 			-- Send out valid mouse events to component objects
 			exportButton.mousepressed(x, y, button)
 			settingsButton.mousepressed(x, y, button)
+			clearButton.mousepressed(x, y, button)
 
             -- Clicked out of bounds
 			if x > w * cellSize
@@ -196,7 +207,7 @@ function love.mousepressed(x, y, button)
 			startY = toMapCoord(clickY)
 
 			if not exportButton.active and not settingsButton.active
-				then startSet = true end
+				and not clearButton.active then startSet = true end
 
 			-- Debug msg
 			-- if startSet then
@@ -236,6 +247,7 @@ function love.mousereleased(x, y, button)
 	if settingsSet then
 		exportButton.mousereleased(x, y, button)
 		settingsButton.mousereleased(x, y, button)
+		clearButton.mousereleased(x, y, button)
 		if exportButton.clicked then
 			local exporter = mapExporter.newMapExporter()
 			exporter.ExportMap(map, h, w, startY, startX, startSet, finishSet)
@@ -248,6 +260,10 @@ function love.mousereleased(x, y, button)
 
 			-- Select first text box
 			settings.TabSelect()
+		end
+		if clearButton.clicked then
+			clearButton.clicked = false
+			love.load()
 		end
 	end
 	if not settingsSet then
