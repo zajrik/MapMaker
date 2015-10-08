@@ -283,7 +283,7 @@ function love.keypressed(key)
 		if toMapCoord(y) > h then validPos = false
 			else y = toMapCoord(y) end
 		if validPos then
-			if     key == 'w' then map[y][y] = '^';	checkCell(x, y)
+			if     key == 'w' then map[y][x] = '^';	checkCell(x, y)
 			elseif key == 'd' then map[y][x] = '>'; checkCell(x, y)
 			elseif key == 's' then map[y][x] = 'v'; checkCell(x, y)
 			elseif key == 'a' then map[y][x] = '<'; checkCell(x, y)
