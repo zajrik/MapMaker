@@ -1,5 +1,9 @@
 -- @namespace MapMaker
--- @class MapExporter: Export the drawn map to .map file
+-- @class MapExporter: 
+-- Export the drawn map to .map file. MapExporter handles the primary
+-- logic behind making sure a map contains the essentials to be read
+-- by the robot, whereas MapChecker will verify that the actual path
+-- itself is able to be followed by the robot.
 local MapMaker = {}; function MapMaker.newMapExporter()
 	
 	-- Constructor
@@ -7,7 +11,8 @@ local MapMaker = {}; function MapMaker.newMapExporter()
 
 	local mapChecker = require 'mapchecker'
 
-	-- Export map after running it through MapChecker
+	-- Export map after running it through MapChecker and checking
+	-- for required details (start point, finish point)
 	function this.ExportMap(map, h, w, startY, startX, startSet, finishSet)
 		local mapBuilder, allowExport
 		if startSet and finishSet then
