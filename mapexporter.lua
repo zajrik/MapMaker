@@ -15,7 +15,7 @@ local MapMaker = {}; function MapMaker.newMapExporter()
 	-- for required details (start point, finish point)
 	function this.ExportMap(map, h, w, startY, startX, startSet, finishSet)
 		local mapBuilder, allowExport
-		if startSet and finishSet then
+		if startSet and finishSet and map[startY][startX] ~= '.' then
 			mapBuilder = ''
 			mapBuilder = mapBuilder..string.format(
 				'! h:%d; w:%d; sx:%d; sy:%d\n',
@@ -47,6 +47,20 @@ Note: paths can not cross the same cell more than once.]],
 					buttons
 				)
 			end
+		elseif startSet and finishSet and map[startY][startX] == '.' then
+			local buttons = {'OK'}
+			local alert = love.window.showMessageBox(
+				'Alert',
+				'You need to set a start direction before the map can be exported.',
+				buttons
+			)
+		elseif startSet and not finishSet and map[startY][startX] == '.' then
+			local buttons = {'OK'}
+			local alert = love.window.showMessageBox(
+				'Alert',
+				'You need to set a start direction and a finish before the map can be exported.',
+				buttons
+			)
 		elseif startSet and not finishSet then
 			local buttons = {'OK'}
 			local alert = love.window.showMessageBox(
