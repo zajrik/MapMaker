@@ -12,7 +12,7 @@ local MapMaker = {}; function MapMaker.newMapExporter()
 	local mapChecker = require 'mapchecker'
 
 	-- Export map after running it through MapChecker and checking
-	-- for required details (start point, finish point)
+	-- for required details (start point, finish point, start direction)
 	function this.ExportMap(map, h, w, startY, startX, startSet, finishSet)
 		local mapBuilder, allowExport
 		if startSet and finishSet and map[startY][startX] ~= '.' then

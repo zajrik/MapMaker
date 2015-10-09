@@ -3,15 +3,15 @@
 -- Check map for valid path. If there are any problems with the map prior
 -- to parsing that primary logic misses, MapChecker will catch it. 
 -- Nothing gets past MapChecker. (At least not in testing.)
-local MapMaker = {}; function MapMaker.newMapChecker(mapHeight, mapWidth, startX, startY)
+local MapMaker = {}; function MapMaker.newMapChecker(mapHeight, mapWidth, startY, startX)
 	
 	-- Constructor
 	local this = 
 	{
 		mapHeight = mapHeight,
 		mapWidth = mapWidth,
-		startX = startX,
-		startY = startY
+		startY = startY,
+		startX = startX
 	}
 
 	-- Direction enum
@@ -32,12 +32,12 @@ local MapMaker = {}; function MapMaker.newMapChecker(mapHeight, mapWidth, startX
 		local foundEnd = false
 
 		-- Get start direction from start coordinate
-		x = tonumber(this.startX); y = tonumber(this.startY)
-		if     map[x][y] == '^' then startDirection = Direction.NORTH
-		elseif map[x][y] == '>' then startDirection = Direction.EAST
-		elseif map[x][y] == 'v' then startDirection = Direction.SOUTH
-		elseif map[x][y] == '<' then startDirection = Direction.WEST
-		elseif map[x][y] == '.' then return false
+		y = tonumber(this.startY); x = tonumber(this.startX)
+		if     map[y][x] == '^' then startDirection = Direction.NORTH
+		elseif map[y][x] == '>' then startDirection = Direction.EAST
+		elseif map[y][x] == 'v' then startDirection = Direction.SOUTH
+		elseif map[y][x] == '<' then startDirection = Direction.WEST
+		elseif map[y][x] == '.' then return false
 		end
 
 		next = startDirection
@@ -47,23 +47,23 @@ local MapMaker = {}; function MapMaker.newMapChecker(mapHeight, mapWidth, startX
 		local counter = 0
 		repeat
 			if     counter > limiter then return false end
-			if     next == Direction.NORTH then x = x - 1
-			elseif next == Direction.EAST  then y = y + 1
-			elseif next == Direction.SOUTH then x = x + 1
-			elseif next == Direction.WEST  then y = y - 1
+			if     next == Direction.NORTH then y = y - 1
+			elseif next == Direction.EAST  then x = x + 1
+			elseif next == Direction.SOUTH then y = y + 1
+			elseif next == Direction.WEST  then x = x - 1
 			end
 
-			if     map[x][y] == '^' then next = Direction.NORTH
-			elseif map[x][y] == '>' then next = Direction.EAST
-			elseif map[x][y] == 'v' then next = Direction.SOUTH
-			elseif map[x][y] == '<' then next = Direction.WEST
-			elseif map[x][y] == '*' then next = Direction.HOME
-				if this.startX == x and this.startY == y then
+			if     map[y][x] == '^' then next = Direction.NORTH
+			elseif map[y][x] == '>' then next = Direction.EAST
+			elseif map[y][x] == 'v' then next = Direction.SOUTH
+			elseif map[y][x] == '<' then next = Direction.WEST
+			elseif map[y][x] == '*' then next = Direction.HOME
+				if this.startY == y and this.startX == x then
 					return false
 				else
 					foundEnd = true
 				end
-			elseif map[x][y] == '.' then return false
+			elseif map[y][x] == '.' then return false
 			else end
 
 			counter = counter + 1
