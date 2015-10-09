@@ -53,6 +53,8 @@ local MapMaker = {}; function MapMaker.newMapChecker(mapHeight, mapWidth, startY
 			elseif next == Direction.WEST  then x = x - 1
 			end
 
+			if y < 1 or x < 1 then return false end
+
 			if     map[y][x] == '^' then next = Direction.NORTH
 			elseif map[y][x] == '>' then next = Direction.EAST
 			elseif map[y][x] == 'v' then next = Direction.SOUTH
