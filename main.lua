@@ -37,6 +37,7 @@ local exportClick
 local map
 
 local canvas_grid
+local canvas_activeCells
 
 function love.load()
 	love.graphics.setFont(font)
@@ -72,6 +73,7 @@ function love.load()
 	button_settings = button.newButton(
 		'Settings', 0, toCell(h) + 26, toCell(w))
 
+	-- Button click handlers
 	clickHandler_export = 
 		event.newClickHandler((
 			function()
@@ -79,14 +81,12 @@ function love.load()
 				exporter.ExportMap(map, h, w, startY, startX, startSet, finishSet)
 			end
 		))
-
 	clickHandler_clear = 
 		event.newClickHandler((
 			function()
 				love.load()
 			end
 		))
-
 	clickHandler_settings = 
 		event.newClickHandler((
 			function()
@@ -110,10 +110,9 @@ function love.load()
 		end
 	end
 
-	-- Draw background grid to a canvas
+	-- Prepare background grid canvas and draw background grid to it
 	canvas_grid = love.graphics.newCanvas(toCell(w), toCell(h))
 	love.graphics.setCanvas(canvas_grid)
-		canvas_grid:clear()
 		local count = 1
 		local moveX = 0
 		local moveY = 0
@@ -134,6 +133,9 @@ function love.load()
 			moveY = moveY + cellSize
 		end
 	love.graphics.setCanvas()
+
+	-- Prepare the canvas for active direction marker cells
+	canvas_activeCells = love.graphics.newCanvas(toCell(w), toCell(h))
 end
 
 
@@ -144,33 +146,16 @@ function love.draw()
 	love.graphics.setColor(255, 255, 255, 255)
 	love.graphics.draw(canvas_grid, 0, 0)
 
-	-- Draw chosen start coord cell
-	if startSet then
-		love.graphics.setColor(0, 255, 0, 255)
-		love.graphics.rectangle('fill', 
-			toCell(toGridCoord(clickX)),
-			toCell(toGridCoord(clickY)),
-			cellSize, cellSize)
-	end
+	-- Draw active direction cells canvas
+	love.graphics.setColor(255, 255, 255, 255)
+	love.graphics.draw(canvas_activeCells, 0, 0)
 
 	-- Draw bottom buttons
 	button_export.Show()
 	button_settings.Show()
 	button_clear.Show()
 
-	-- Draw movement markers
-	for y = 1, #map do
-		for x = 1, #map[y] do
-			if     map[y][x] == '^' then cellText('^', y, x)
-			elseif map[y][x] == '>' then cellText('>', y, x)
-			elseif map[y][x] == 'v' then cellText('v', y, x)
-			elseif map[y][x] == '<' then cellText('<', y, x)
-			elseif map[y][x] == '*' then cellText('*', y, x)
-			end
-		end
-	end
-
-	-- Layer settings dialog on top, centered on grid vertically/horizontally
+	-- Layer settings dialog on top, centered vertically/horizontally
 	if settings.settingsChosen then
 		settingsSet = true
 	end
@@ -227,7 +212,34 @@ function cellText(text, y, x)
 	love.graphics.print(text, toCell(x - 1) + 10, toCell(y - 1) + 5 )
 end
 
+-- Update the activeCells canvas
+function updateCells()
+	love.graphics.setCanvas(canvas_activeCells)
+		canvas_activeCells:clear()
 
+		-- Draw chosen start coord cell
+		if startSet then
+			love.graphics.setColor(0, 255, 0, 255)
+			love.graphics.rectangle('fill', 
+				toCell(toGridCoord(clickX)),
+				toCell(toGridCoord(clickY)),
+				cellSize, cellSize)
+		end
+
+		-- Draw movement marker cells
+		for y = 1, #map do
+			for x = 1, #map[y] do
+				if     map[y][x] == '^' then cellText('^', y, x)
+				elseif map[y][x] == '>' then cellText('>', y, x)
+				elseif map[y][x] == 'v' then cellText('v', y, x)
+				elseif map[y][x] == '<' then cellText('<', y, x)
+				elseif map[y][x] == '*' then cellText('*', y, x)
+				end
+			end
+		end
+
+	love.graphics.setCanvas()
+end
 
 -- Mouse pressed event listener
 function love.mousepressed(x, y, button)
@@ -252,7 +264,8 @@ function love.mousepressed(x, y, button)
 			startY = toMapCoord(clickY)
 
 			if not button_export.active and not button_settings.active
-				and not button_clear.active then startSet = true end
+				and not button_clear.active then startSet = true
+					updateCells() end
 		end
 	end
 
@@ -277,6 +290,7 @@ function love.mousepressed(x, y, button)
 
 		-- Clicked any cell, remove it
 		map[toMapCoord(rclickY)][toMapCoord(rclickX)] = '.'
+		updateCells()
 	end
 end
 
@@ -320,6 +334,7 @@ function love.keypressed(key)
 					finishSet = true
 				end
 			end
+			updateCells()
 		end
 	end
 	-- Send keys to settings dialog
