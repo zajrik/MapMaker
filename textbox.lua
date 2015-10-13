@@ -5,10 +5,10 @@ local MapMaker = {}; function MapMaker.newTextBox(value, x, y, width)
 	-- Constructor
 	local this = 
 	{
-		x = x,
-		y = y,
-		width = width,
-		value = value,
+		x        = x,
+		y        = y,
+		width    = width,
+		value    = value,
 		selected = false
 	}
 
@@ -28,8 +28,9 @@ local MapMaker = {}; function MapMaker.newTextBox(value, x, y, width)
 
 	-- Handle mouse press
 	function this.mousepressed(x, y, button)
-		if x > this.x and x < this.x + width and y > this.y and y < this.y + 20 then
-			this.selected = true
+		if x > this.x and x < this.x + width 
+			and y > this.y and y < this.y + 20 then
+				this.selected = true
 		else
 			this.selected = false
 		end
