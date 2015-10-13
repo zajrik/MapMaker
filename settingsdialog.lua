@@ -16,12 +16,16 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 		gridW
 	}
 
-	local text = require 'textbox'
-	local btn = require 'button'
+	local text  = require 'textbox'
+	local btn   = require 'button'
+	local event = require 'clickhandler'
 
 	local x, y
 	local textbox_height
 	local textbox_width
+	local button_confirm
+
+	local clickHandler_confirm
 
 	-- Read settings file, create one if it doesn't exist
 	function this.Read()
@@ -59,11 +63,37 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 	this.y = (((this.y / 2) * 30) - (this.height / 2))
 	this.x = (((this.x / 2) * 30) - (this.width / 2))
 
-	-- Initialize text boxes and confirm button
-	local textbox_height = text.newTextBox(valueY, this.x + 5, this.y + 20, 67)
-	local textbox_width = text.newTextBox(valueX, this.x + this.width - 72, this.y + 20, 67)
-	local confirmButton = btn.newButton(
+	-- Initialize text boxes, confirm button, confirm button click handler
+	textbox_height = text.newTextBox(valueY, this.x + 5, this.y + 20, 67)
+	textbox_width  = text.newTextBox(valueX, this.x + this.width - 72, this.y + 20, 67)
+	button_confirm = btn.newButton(
 		'OK', this.x + 10, this.y + this.height - 30, this.width - 20)
+
+	clickHandler_confirm = 
+		event.newClickHandler((
+			function()
+				-- Enforce min/max values
+				if  tonumber(textbox_height.value) >= 8 
+				and tonumber(textbox_height.value) <= 25
+				and tonumber(textbox_width.value)  >= 8 
+				and tonumber(textbox_width.value)  <= 25 then
+					this.settingsChosen = true
+					this.Write(textbox_height.value, textbox_width.value)
+
+					-- Force reload of all components. Will set grid/window dimensions
+					-- and allow all UI elements to have their position/dimension values
+					-- recalculated appropriately
+					love.load()
+				else
+					local buttons = {'OK'}
+					local alert = love.window.showMessageBox(
+						'Alert',
+						'Grid height and width must be between 8 and 25.',
+						buttons
+					)
+				end
+			end
+		))
 
 	-- Handle display of the dialog
 	function this.Show()
@@ -85,12 +115,12 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 		love.graphics.print('Width', this.x + 89, this.y + 1)
 
 		-- Show text boxes and button
-		textbox_height.Show(); textbox_width.Show(); confirmButton.Show()
+		textbox_height.Show(); textbox_width.Show(); button_confirm.Show()
 	end
 
 
 
-	-- Select text boxes with tabs
+	-- Select text boxes with tab key
 	function this.TabSelect()
 		if textbox_height.selected then
 			textbox_height.selected = false
@@ -105,33 +135,12 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 	function this.mousepressed(x, y, button)
 		textbox_height.mousepressed(x, y, button)
 		textbox_width.mousepressed(x, y, button)
-		confirmButton.mousepressed(x, y, button)
+		button_confirm.mousepressed(x, y, button)
 	end
 
 	-- Handle mouse release
 	function this.mousereleased(x, y, button)
-		confirmButton.mousereleased(x, y, button)
-		if confirmButton.clicked then
-			if tonumber(textbox_height.value) >= 8 and tonumber(textbox_height.value) <= 25
-			and tonumber(textbox_width.value) >= 8 and tonumber(textbox_width.value) <= 25 then
-				this.settingsChosen = true
-				confirmButton.clicked = false
-				this.Write(textbox_height.value, textbox_width.value)
-
-				-- Force reload of all components. Will set grid/window dimensions
-				-- and allow all UI elements to have their position/dimension values
-				-- recalculated appropriately
-				love.load()
-			else
-				confirmButton.clicked = false
-				local buttons = {'OK'}
-				local alert = love.window.showMessageBox(
-					'Alert',
-					'Grid height and width must be between 8 and 25.',
-					buttons
-				)
-			end
-		end
+		button_confirm.mousereleased(x, y, button, clickHandler_confirm)
 	end
 
 	-- Handle text input
@@ -149,11 +158,11 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 			this.TabSelect()
 		elseif key == 'return' then
 			-- Simulate confirm button click
-			this.mousereleased(confirmButton.x + 1, confirmButton.y + 1, 'l')
+			this.mousereleased(button_confirm.x + 1, button_confirm.y + 1, 'l')
 		elseif key == 'escape' then
 			this.settingsChosen = true
 		end
-		
+
 		if textbox_height.selected then
 			textbox_height.keypressed(key)
 		elseif textbox_width.selected then

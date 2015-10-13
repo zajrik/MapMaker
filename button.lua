@@ -10,8 +10,7 @@ local MapMaker = {}; function MapMaker.newButton(text, x, y, width)
 		x = x,
 		y = y,
 		width = width,
-		active = false,
-		clicked = false
+		active = false
 	}
 
 	-- Handle display of the button
@@ -31,7 +30,7 @@ local MapMaker = {}; function MapMaker.newButton(text, x, y, width)
 		)
 	end
 
-	-- Handle mouse press
+	-- Handle mouse press, show button click feedback
 	function this.mousepressed(x, y, button)
 		if x > this.x and x < this.x + width and y > this.y and y < this.y + 25 then
 			this.active = true
@@ -40,12 +39,11 @@ local MapMaker = {}; function MapMaker.newButton(text, x, y, width)
 		end
 	end
 
-	-- Handle mouse release
-	function this.mousereleased(x, y, button)
+	-- Handle mouse release, 
+	function this.mousereleased(x, y, button, clickHandler)
 		this.active = false
 		if x > this.x and x < this.x + width and y > this.y and y < this.y + 25 then
-			this.clicked = true
-			--print('clicked: '..this.text)
+			(clickHandler)()
 		end
 	end
 	return this

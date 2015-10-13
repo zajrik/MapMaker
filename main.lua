@@ -8,6 +8,7 @@ love.window.setIcon(iconData)
 local settingsDialog = require 'settingsdialog'
 local text           = require 'textbox'
 local button         = require 'button'
+local event          = require 'clickhandler'
 
 local mapChecker  = require 'mapchecker'
 local mapExporter = require 'mapexporter'
@@ -18,6 +19,10 @@ local settings
 local button_export
 local button_clear
 local button_settings
+
+local clickHandler_export
+local clickHandler_clear
+local clickHandler_settings
 
 local settingsSet
 
@@ -62,6 +67,32 @@ function love.load()
 		'Clear', toCell(w) / 2 + 1, toCell(h), toCell(w)/2)
 	button_settings = button.newButton(
 		'Settings', 0, toCell(h) + 26, toCell(w))
+
+	clickHandler_export = 
+		event.newClickHandler((
+			function()
+				local exporter = mapExporter.newMapExporter()
+				exporter.ExportMap(map, h, w, startY, startX, startSet, finishSet)
+			end
+		))
+
+	clickHandler_clear = 
+		event.newClickHandler((
+			function()
+				love.load()
+			end
+		))
+
+	clickHandler_settings = 
+		event.newClickHandler((
+			function()
+				settings.settingsChosen = false
+				settingsSet = false
+
+				-- Select first text box
+				settings.TabSelect()
+			end
+		))
 
 	-- Set window size for the grid and bottom buttons
 	love.window.setMode(w * cellSize, h * cellSize + 51)
@@ -190,6 +221,7 @@ end
 function love.mousepressed(x, y, button)
 	-- Left click
 	if button == 'l' then
+		-- Pass mouse presses to settings dialog
 		settings.mousepressed(x, y, button)
 		if settingsSet then
 			-- Send out valid mouse events to component objects
@@ -209,13 +241,6 @@ function love.mousepressed(x, y, button)
 
 			if not button_export.active and not button_settings.active
 				and not button_clear.active then startSet = true end
-
-			-- Debug msg
-			-- if startSet then
-			-- 	print(string.format(
-			-- 		'map[%d][%d]',toMapCoord(y), 
-			-- 			toMapCoord(x)))
-			-- end
 		end
 	end
 
@@ -246,26 +271,9 @@ end
 -- Mouse released event listener
 function love.mousereleased(x, y, button)
 	if settingsSet then
-		button_export.mousereleased(x, y, button)
-		button_settings.mousereleased(x, y, button)
-		button_clear.mousereleased(x, y, button)
-		if button_export.clicked then
-			local exporter = mapExporter.newMapExporter()
-			exporter.ExportMap(map, h, w, startY, startX, startSet, finishSet)
-			button_export.clicked = false
-		end
-		if button_settings.clicked then
-			settings.settingsChosen = false
-			settingsSet = false
-			button_settings.clicked = false
-
-			-- Select first text box
-			settings.TabSelect()
-		end
-		if button_clear.clicked then
-			button_clear.clicked = false
-			love.load()
-		end
+		button_export.mousereleased(x, y, button, clickHandler_export)
+		button_settings.mousereleased(x, y, button, clickHandler_settings)
+		button_clear.mousereleased(x, y, button, clickHandler_clear)
 	end
 	if not settingsSet then
 		settings.mousereleased(x, y, button)
