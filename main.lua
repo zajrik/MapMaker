@@ -6,7 +6,6 @@ iconData = icon:getData()
 love.window.setIcon(iconData)
 
 local settingsDialog = require 'settingsdialog'
-local text           = require 'textbox'
 local button         = require 'button'
 local event          = require 'clickhandler'
 
@@ -93,8 +92,6 @@ function love.load()
 			function()
 				settings.settingsChosen = false
 				settingsSet = false
-
-				-- Select first text box
 				settings.TabSelect()
 			end
 		))
@@ -206,11 +203,12 @@ function cellText(text, y, x)
 	love.graphics.rectangle(
 		'fill', toCell(x - 1), toCell(y - 1), cellSize, cellSize)
 	love.graphics.setColor(0, 0, 0, 255)
-	love.graphics.print(text, toCell(x - 1) + 10, toCell(y - 1) + 5 )
+	love.graphics.print(text, toCell(x - 1) + 10, toCell(y - 1) + 5)
 end
 
 -- Update the activeCells canvas
 function updateCells()
+
 	canvas_activeCells:renderTo(function()
 		canvas_activeCells:clear()
 		-- Draw chosen start coord cell
@@ -234,6 +232,7 @@ function updateCells()
 			end
 		end
 	end)
+
 end
 
 -- Mouse pressed event listener

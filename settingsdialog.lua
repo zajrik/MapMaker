@@ -31,7 +31,7 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 		-- Read settings file
 		else
 			local settingsLoader = love.filesystem.load('MapMakerSettings.lua')
-			local settings = settingsLoader()
+			local settings = (settingsLoader)()
 			return settings.height, settings.width
 		end
 		
