@@ -12,9 +12,9 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 		settingsChosen
 	}
 
-	local text  = require 'textbox'
-	local btn   = require 'button'
-	local event = require 'clickhandler'
+	local text   = require 'textbox'
+	local button = require 'button'
+	local event  = require 'clickhandler'
 
 	local textbox_height
 	local textbox_width
@@ -57,7 +57,7 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 	-- Initialize text boxes, confirm button, confirm button click handler
 	textbox_height = text.newTextBox(valueY, this.x + 5, this.y + 20, 67)
 	textbox_width  = text.newTextBox(valueX, this.x + this.width - 72, this.y + 20, 67)
-	button_confirm = btn.newButton(
+	button_confirm = button.newButton(
 		'OK', this.x + 10, this.y + this.height - 30, this.width - 20)
 
 	clickHandler_confirm = 
@@ -100,7 +100,8 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 		love.graphics.setColor(0, 0, 0, 255)
 		love.graphics.rectangle('fill', this.x, this.y, this.width, this.height)
 		love.graphics.setColor(200, 200, 200, 255)
-		love.graphics.rectangle('fill', this.x+1, this.y+1, this.width-2, this.height-2)
+		love.graphics.rectangle(
+			'fill', this.x + 1, this.y + 1, this.width - 2, this.height - 2)
 		love.graphics.setColor(0, 0, 0, 255)
 		love.graphics.print('Height', this.x + 15, this.y + 1)
 		love.graphics.print('Width', this.x + 89, this.y + 1)

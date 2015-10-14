@@ -23,10 +23,9 @@ local MapMaker = {}; function MapMaker.newTextBox(value, x, y, width)
 			'fill', this.x, this.y, this.width, this.height)
 		love.graphics.setColor(255, 255, 255, 255)
 		love.graphics.rectangle(
-			'fill', this.x+1, this.y+1, this.width-2, this.height-2)
+			'fill', this.x + 1, this.y + 1, this.width - 2, this.height - 2)
 		love.graphics.setColor(0, 0, 0, 255)
 		love.graphics.print(this.value, this.x + 2, this.y)
-		
 	end
 
 	-- Handle mouse press
@@ -50,7 +49,6 @@ local MapMaker = {}; function MapMaker.newTextBox(value, x, y, width)
 	function this.keypressed(key)
 		if key == 'backspace' then
 			local offset = utf8.offset(this.value, -1)
-
 			if offset then
 				this.value = string.sub(this.value, 1, offset - 1)
 			end

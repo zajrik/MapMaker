@@ -167,7 +167,7 @@ function love.draw()
 	if toMapCoord(mouseY) > h then mouseY = h
 		else mouseY = toMapCoord(mouseY) end
 	love.graphics.setColor(0, 0, 0, 255)
-	love.graphics.print(mouseY..','..mouseX, 3, toCell(h)-20)
+	love.graphics.print(mouseY..','..mouseX, 3, toCell(h) - 20)
 
 end
 
@@ -346,4 +346,3 @@ function love.textinput(text)
 		settings.textinput(text)
 	end
 end
-
