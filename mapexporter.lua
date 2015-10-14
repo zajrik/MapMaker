@@ -87,9 +87,33 @@ Note: paths can not cross the same cell more than once.]],
 			allowExport = false
 		end
 		if allowExport then
-			local generatedMap = io.open('generatedMap.map', 'w')
+			if not love.filesystem.exists('/map') then
+				love.filesystem.createDirectory('map') end
+
+			local generatedMap, errorstr = 
+				love.filesystem.newFile('/map/generatedMap.map')
+			generatedMap:open('w')
 			generatedMap:write(mapBuilder)
 			generatedMap:close()
+			if not errorstr then
+				local buttons = {'OK', 'Cancel'}
+				local result = love.window.showMessageBox(
+					'Alert',
+					'Map was created successfully.\nPress OK to navigate to the map file.',
+					buttons
+				)
+				if result == 1 then
+					love.system.openURL(
+						'file://'..love.filesystem.getSaveDirectory()..'/map')
+				end
+			else
+				local buttons = {'OK'}
+				local alert = love.window.showMessageBox(
+					'Alert',
+					'There was a problem creating the map file.\nPlease try again.',
+					buttons
+				)
+			end
 		end
 	end
 

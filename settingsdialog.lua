@@ -27,6 +27,10 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 
 	local clickHandler_confirm
 
+	-- TODO: make settings file a valid lua file containing a table
+	--       with the height and width settings as named indices
+	--       and load it with love.filesystem.load()
+
 	-- Read settings file, create one if it doesn't exist
 	function this.Read()
 		-- Create initial settings file with defaults
