@@ -113,24 +113,20 @@ function love.load()
 	-- Prepare background grid canvas and draw background grid to it
 	canvas_grid = love.graphics.newCanvas(toCell(w), toCell(h))
 	love.graphics.setCanvas(canvas_grid)
-		local count = 1
-		local moveX = 0
-		local moveY = 0
-		for i = 1, h do
-			for i = 1, w do
-				if count % 2 ~= 0 then
-					if i % 2 == 0 then love.graphics.setColor(240, 240, 240, 255)
+		local nextX, nextY = 0, 0
+		for y = 1, h do
+			for x = 1, w do
+				if y % 2 ~= 0 then
+					if x % 2 == 0 then love.graphics.setColor(230, 230, 230, 255)
 					else love.graphics.setColor(255, 255, 255, 255) end
 				else
-					if i % 2 ~= 0 then love.graphics.setColor(240, 240, 240, 255)
+					if x % 2 ~= 0 then love.graphics.setColor(230, 230, 230, 255)
 					else love.graphics.setColor(255, 255, 255, 255) end
 				end
-				love.graphics.rectangle('fill', moveX , moveY, cellSize, cellSize)
-				moveX = moveX + cellSize
+				love.graphics.rectangle('fill', nextX , nextY, cellSize, cellSize)
+				nextX = nextX + cellSize
 			end
-			count = count + 1
-			moveX = 0
-			moveY = moveY + cellSize
+			nextX, nextY = 0, (nextY + cellSize)
 		end
 	love.graphics.setCanvas()
 
