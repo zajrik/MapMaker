@@ -113,7 +113,7 @@ function love.load()
 
 	-- Prepare background grid canvas and draw background grid to it
 	canvas_grid = love.graphics.newCanvas(toCell(w), toCell(h))
-	love.graphics.setCanvas(canvas_grid)
+	canvas_grid:renderTo(function()
 		local nextX, nextY = 0, 0
 		for y = 1, h do
 			for x = 1, w do
@@ -129,7 +129,7 @@ function love.load()
 			end
 			nextX, nextY = 0, (nextY + cellSize)
 		end
-	love.graphics.setCanvas()
+	end)
 
 	-- Prepare the canvas for active direction marker cells
 	canvas_activeCells = love.graphics.newCanvas(toCell(w), toCell(h))
@@ -211,9 +211,8 @@ end
 
 -- Update the activeCells canvas
 function updateCells()
-	love.graphics.setCanvas(canvas_activeCells)
+	canvas_activeCells:renderTo(function()
 		canvas_activeCells:clear()
-
 		-- Draw chosen start coord cell
 		if startSet then
 			love.graphics.setColor(0, 255, 0, 255)
@@ -234,8 +233,7 @@ function updateCells()
 				end
 			end
 		end
-
-	love.graphics.setCanvas()
+	end)
 end
 
 -- Mouse pressed event listener
