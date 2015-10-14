@@ -11,9 +11,7 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 		winW = 0,
 		x = 0,
 		y = 0,
-		settingsChosen,
-		gridH,
-		gridW
+		settingsChosen
 	}
 
 	local text  = require 'textbox'
@@ -27,37 +25,29 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 
 	local clickHandler_confirm
 
-	-- TODO: make settings file a valid lua file containing a table
-	--       with the height and width settings as named indices
-	--       and load it with love.filesystem.load()
-
 	-- Read settings file, create one if it doesn't exist
 	function this.Read()
 		-- Create initial settings file with defaults
-		if not love.filesystem.exists('MapMaker.settings') then
+		if not love.filesystem.exists('MapMakerSettings.lua') then
 			this.Write(8, 8)
 			this.Read()
 		-- Read settings file
 		else
-			local height, width
-			for line in love.filesystem.lines('MapMaker.settings') do
-				if line:match('height:%d+') then
-					this.gridH = tonumber(line:match('%d+'))
-				elseif line:match('width:%d+') then
-					this.gridW = tonumber(line:match('%d+'))
-				end
-			end
+			local settingsLoader = love.filesystem.load('MapMakerSettings.lua')
+			local settings = settingsLoader()
+			return settings.height, settings.width
 		end
-		return this.gridH, this.gridW
+		
 	end
 
 	-- Write to settings file
 	function this.Write(h, w)
-		local settingsString = string.format('height:%d\nwidth:%d', h, w)
-		local settings, errorstr = love.filesystem.newFile('MapMaker.settings')
-		settings:open('w')
-		settings:write(settingsString)
-		settings:close()
+		local settingsString = string.format(
+			'return \n{\n\theight = %d,\n\twidth = %d\n}', h, w)
+		local settingsFile, errorstr = love.filesystem.newFile('MapMakerSettings.lua')
+		settingsFile:open('w')
+		settingsFile:write(settingsString)
+		settingsFile:close()
 	end
 
 
