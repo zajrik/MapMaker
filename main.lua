@@ -15,6 +15,9 @@ local mapExporter = require 'mapexporter'
 
 local cellSize = 30
 
+local canvas_grid
+local canvas_activeCells
+
 local button_export
 local button_clear
 local button_settings
@@ -35,9 +38,6 @@ local rclickY, rclickX
 local exportClick
 
 local map
-
-local canvas_grid
-local canvas_activeCells
 
 function love.load()
 	love.graphics.setFont(font)
