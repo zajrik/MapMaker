@@ -7,8 +7,6 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 	{
 		width = 150,
 		height = 76,
-		winH = 0,
-		winW = 0,
 		x = 0,
 		y = 0,
 		settingsChosen
@@ -18,7 +16,6 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 	local btn   = require 'button'
 	local event = require 'clickhandler'
 
-	local x, y
 	local textbox_height
 	local textbox_width
 	local button_confirm
@@ -92,12 +89,12 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 	-- Handle display of the dialog
 	function this.Show()
 		-- Get actual window height, width for UI darkening overlay
-		this.winH = love.window.getHeight()
-		this.winW = love.window.getWidth()
+		local winH = love.window.getHeight()
+		local winW = love.window.getWidth()
 
 		-- UI darken overlay
 		love.graphics.setColor(0, 0, 0, 200)
-		love.graphics.rectangle('fill', 0, 0, this.winW, this.winH)
+		love.graphics.rectangle('fill', 0, 0, winW, winH)
 
 		-- Draw diaglog box
 		love.graphics.setColor(0, 0, 0, 255)

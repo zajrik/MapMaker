@@ -1,6 +1,6 @@
-io.stdout:setvbuf("no")
+io.stdout:setvbuf('no')
 love.window.setTitle('Map Maker')
-font = love.graphics.newFont("SourceCodePro-Regular.ttf", 14)
+font = love.graphics.newFont('SourceCodePro-Regular.ttf', 14)
 icon = love.graphics.newImage('icon.png')
 iconData = icon:getData()
 love.window.setIcon(iconData)
@@ -15,7 +15,6 @@ local mapExporter = require 'mapexporter'
 
 local cellSize = 30
 
-local settings
 local button_export
 local button_clear
 local button_settings
@@ -24,6 +23,7 @@ local clickHandler_export
 local clickHandler_clear
 local clickHandler_settings
 
+local settings
 local settingsSet
 
 local startY, startX, startSet
@@ -78,7 +78,8 @@ function love.load()
 		event.newClickHandler((
 			function()
 				local exporter = mapExporter.newMapExporter()
-				exporter.ExportMap(map, h, w, startY, startX, startSet, finishSet)
+				exporter.ExportMap(
+					map, h, w, startY, startX, startSet, finishSet)
 			end
 		))
 	clickHandler_clear = 
