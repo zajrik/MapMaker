@@ -20,7 +20,8 @@ local MapMaker = {}; function MapMaker.newTextBox(value, x, y, width)
 	-- Update timer
 	function this.update(dt)
 		timer = timer + dt
-		if timer >= 1.5 then timer = 0 end
+		if timer >= 1.5 or not this.selected
+			then timer = 0 end
 	end
 
 	-- Handle display of the text box
@@ -34,7 +35,7 @@ local MapMaker = {}; function MapMaker.newTextBox(value, x, y, width)
 			'fill', this.x + 1, this.y + 1, this.width - 2, this.height - 2)
 		love.graphics.setColor(0, 0, 0, 255)
 		love.graphics.print(this.value, this.x + 2, this.y)
-		if timer > .75 and this.selected then
+		if timer <= .75 and this.selected then
 			love.graphics.print('|', font:getWidth(this.value) + this.x, this.y - 1)
 		else end
 	end
@@ -53,6 +54,7 @@ local MapMaker = {}; function MapMaker.newTextBox(value, x, y, width)
 	function this.textinput(text)
 		if text:match('%d') and string.len(this.value) < 2 then
 			this.value = this.value..text
+			timer = 0
 		end
 	end
 
@@ -62,6 +64,7 @@ local MapMaker = {}; function MapMaker.newTextBox(value, x, y, width)
 			local offset = utf8.offset(this.value, -1)
 			if offset then
 				this.value = string.sub(this.value, 1, offset - 1)
+				timer = 0
 			end
 		end
 	end
