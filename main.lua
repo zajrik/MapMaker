@@ -261,14 +261,11 @@ function love.mousepressed(x, y, button)
 				or y > h * cellSize then
 
 			-- Clicked grid
-			else clickX = x; clickY = y end
-
-			startX = toMapCoord(clickX)
-			startY = toMapCoord(clickY)
-
-			if not button_export.active and not button_settings.active
-				and not button_clear.active then startSet = true
-					updateCells() end
+			else clickX = x; clickY = y 
+				startX = toMapCoord(clickX)
+				startY = toMapCoord(clickY)
+				startSet = true; updateCells()
+			end
 		end
 	end
 
@@ -279,33 +276,37 @@ function love.mousepressed(x, y, button)
 			or y > h * cellSize then
 
 		-- Clicked grid
-		else rclickX = x; rclickY = y end
+		else rclickX = x; rclickY = y
+			-- Clicked the start cell, remove it
+			if toMapCoord(x) == startX
+				and toMapCoord(y) == startY
+					then startSet = false end
 
-		-- Clicked the start cell, remove it
-		if toMapCoord(x) == startX
-			and toMapCoord(y) == startY
-				then startSet = false end
+			-- Clicked the finish cell, remove it
+			if toMapCoord(x) == finishX
+				and toMapCoord(y) == finishY
+					then finishSet = false end
 
-		-- Clicked the finish cell, remove it
-		if toMapCoord(x) == finishX
-			and toMapCoord(y) == finishY
-				then finishSet = false end
+			-- Clicked any cell, remove it
+			map[toMapCoord(rclickY)][toMapCoord(rclickX)] = '.'
+			updateCells()
+		end
 
-		-- Clicked any cell, remove it
-		map[toMapCoord(rclickY)][toMapCoord(rclickX)] = '.'
-		updateCells()
+
 	end
 end
 
 -- Mouse released event listener
 function love.mousereleased(x, y, button)
-	if settingsSet then
-		button_export.mousereleased(x, y, button, clickHandler_export)
-		button_settings.mousereleased(x, y, button, clickHandler_settings)
-		button_clear.mousereleased(x, y, button, clickHandler_clear)
-	end
-	if not settingsSet then
-		settings.mousereleased(x, y, button)
+	if button == 'l' then
+		if settingsSet then
+			button_export.mousereleased(x, y, button, clickHandler_export)
+			button_settings.mousereleased(x, y, button, clickHandler_settings)
+			button_clear.mousereleased(x, y, button, clickHandler_clear)
+		end
+		if not settingsSet then
+			settings.mousereleased(x, y, button)
+		end
 	end
 end
 
