@@ -66,6 +66,8 @@ function love.load()
 
 	-- Get height, width from settings file
 	h, w = settings.Read()
+	
+	settings.currentH, settings.currentW = h, w
 
 	-- Get window position to prevent re-centering on clear
 	winX, winY, display = love.window.getPosition()

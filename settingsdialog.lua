@@ -9,7 +9,9 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 		height = 76,
 		x = 0,
 		y = 0,
-		settingsChosen
+		settingsChosen,
+		currentH,
+		currentW
 	}
 
 	local text   = require 'textbox'
@@ -71,10 +73,11 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 					this.settingsChosen = true
 					this.Write(textbox_height.value, textbox_width.value)
 
-					-- Force reload of all components. Will set grid/window dimensions
-					-- and allow all UI elements to have their position/dimension values
-					-- recalculated appropriately
-					love.load()
+					-- Don't clear the grid if values weren't changed
+					if textbox_height.value == this.currentH 
+						and textbox_width.value == this.currentW then
+
+					else love.load() end
 				else
 					local buttons = {'OK'}
 					local alert = love.window.showMessageBox(
