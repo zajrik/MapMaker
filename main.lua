@@ -12,6 +12,9 @@ local event          = require 'clickhandler'
 local mapChecker  = require 'mapchecker'
 local mapExporter = require 'mapexporter'
 
+local winX, winY, display
+
+local h, w
 local cellSize = 30
 
 local canvas_grid
@@ -64,11 +67,18 @@ function love.load()
 	-- Get height, width from settings file
 	h, w = settings.Read()
 
+	-- Get window position to prevent re-centering on clear
+	winX, winY, display = love.window.getPosition()
+
+	-- Set window size for the grid and bottom buttons
+	love.window.setMode(w * cellSize, h * cellSize + 51, 
+		{display = display, x = winX, y = winY})
+
 	-- Bottom buttons
 	button_export = button.newButton(
 		'Export', 0, toCell(h), toCell(w) / 2)
 	button_clear = button.newButton(
-		'Clear', toCell(w) / 2 + 1, toCell(h), toCell(w)/2)
+		'Clear', (toCell(w) / 2) + 1, toCell(h), (toCell(w) / 2) - 1)
 	button_settings = button.newButton(
 		'Settings', 0, toCell(h) + 26, toCell(w))
 
@@ -95,9 +105,6 @@ function love.load()
 				settings.TabSelect()
 			end
 		))
-
-	-- Set window size for the grid and bottom buttons
-	love.window.setMode(w * cellSize, h * cellSize + 51)
 
 	-- Build empty map
 	map = {}
