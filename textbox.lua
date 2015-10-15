@@ -14,6 +14,14 @@ local MapMaker = {}; function MapMaker.newTextBox(value, x, y, width)
 	}
 
 	local utf8 = require 'utf8'
+	local font = love.graphics.newFont("SourceCodePro-Regular.ttf", 14)
+	local timer = 0
+
+	-- Update timer
+	function this.update(dt)
+		timer = timer + dt
+		if timer >= 1.5 then timer = 0 end
+	end
 
 	-- Handle display of the text box
 	function this.Show()
@@ -26,6 +34,9 @@ local MapMaker = {}; function MapMaker.newTextBox(value, x, y, width)
 			'fill', this.x + 1, this.y + 1, this.width - 2, this.height - 2)
 		love.graphics.setColor(0, 0, 0, 255)
 		love.graphics.print(this.value, this.x + 2, this.y)
+		if timer > .75 and this.selected then
+			love.graphics.print('|', font:getWidth(this.value) + this.x, this.y - 1)
+		else end
 	end
 
 	-- Handle mouse press

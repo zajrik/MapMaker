@@ -89,6 +89,12 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 			end
 		))
 
+	-- Update timer
+	function this.update(dt)
+		textbox_height.update(dt)
+		textbox_width.update(dt)
+	end
+
 	-- Handle display of the dialog
 	function this.Show()
 		-- Get actual window height, width for UI darkening overlay

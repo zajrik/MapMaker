@@ -244,6 +244,11 @@ function updateCells()
 
 end
 
+-- Update timer
+function love.update(dt)
+	settings.update(dt)
+end
+
 -- Mouse pressed event listener
 function love.mousepressed(x, y, button)
 	-- Left click
