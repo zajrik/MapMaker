@@ -20,8 +20,7 @@ local MapMaker = {}; function MapMaker.newTextBox(value, x, y, width)
 	-- Update timer
 	function this.update(dt)
 		timer = timer + dt
-		if timer >= 1.5 or not this.selected
-			then timer = 0 end
+		if timer >= 1.5 then timer = 0 end
 	end
 
 	-- Handle display of the text box
@@ -44,7 +43,7 @@ local MapMaker = {}; function MapMaker.newTextBox(value, x, y, width)
 	function this.mousepressed(x, y, button)
 		if x > this.x and x < this.x + width 
 			and y > this.y and y < this.y + this.height then
-				this.selected = true
+				this.selected = true; timer = 0
 		else
 			this.selected = false
 		end
