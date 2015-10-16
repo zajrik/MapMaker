@@ -9,6 +9,7 @@ local MapMaker = {}; function MapMaker.newTextBox(value, x, y, width)
 		y        = y,
 		width    = width,
 		value    = value,
+		oldValue = value,
 		height   = 20,
 		selected = false
 	}

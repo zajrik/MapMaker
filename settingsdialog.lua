@@ -65,6 +65,18 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 	clickHandler_confirm = 
 		event.newClickHandler((
 			function()
+				-- Enforce non-empty values
+				if textbox_height.value == '' or
+					textbox_width.value == '' then
+						local buttons = {'OK'}
+						local alert = love.window.showMessageBox(
+							'Alert',
+							'You must set a value.',
+							buttons, "info", true
+						)
+						return
+				end
+
 				-- Enforce min/max values
 				if  tonumber(textbox_height.value) >= 8 
 				and tonumber(textbox_height.value) <= 25
@@ -162,6 +174,8 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 			this.mousereleased(button_confirm.x + 1, button_confirm.y + 1, 'l')
 		elseif key == 'escape' then
 			this.settingsChosen = true
+			textbox_height.value = textbox_height.oldValue
+			textbox_width.value = textbox_width.oldValue
 		end
 
 		if textbox_height.selected then
