@@ -4,6 +4,7 @@ font = love.graphics.newFont('SourceCodePro-Regular.ttf', 14)
 icon = love.graphics.newImage('icon.png')
 iconData = icon:getData()
 love.window.setIcon(iconData)
+love.graphics.setFont(font)
 
 local settingsDialog = require 'settingsdialog'
 local button         = require 'button'
@@ -42,8 +43,6 @@ local exportClick
 local map
 
 function love.load()
-	love.graphics.setFont(font)
-
 	settingsSet = true
 
 	startY = 0
@@ -69,7 +68,7 @@ function love.load()
 
 	settings.currentH, settings.currentW = h, w
 
-	-- Get window position to prevent re-centering on clear
+	-- Preserve window position
 	winX, winY, display = love.window.getPosition()
 
 	-- Set window size for the grid and bottom buttons

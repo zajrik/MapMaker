@@ -68,11 +68,9 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 				-- Enforce non-empty values
 				if textbox_height.value == '' or
 					textbox_width.value == '' then
-						local buttons = {'OK'}
 						local alert = love.window.showMessageBox(
 							'Alert',
-							'You must set a value.',
-							buttons, "info", true
+							'You must set a value.'
 						)
 						return
 				end
@@ -91,11 +89,9 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 
 					else love.load() end
 				else
-					local buttons = {'OK'}
 					local alert = love.window.showMessageBox(
 						'Alert',
-						'Grid height and width must be between 8 and 25.',
-						buttons
+						'Grid height and width must be between 8 and 25.'
 					)
 				end
 			end

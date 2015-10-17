@@ -36,53 +36,41 @@ local MapMaker = {}; function MapMaker.newMapExporter()
 				allowExport = true
 			else
 				allowExport = false
-				local buttons = {'OK'}
 				local alert = love.window.showMessageBox(
 					'Alert',
 					[[MapChecker could not find a valid direction path.
 Please make sure there is a complete path from start to
 finish.
 
-Note: paths can not cross the same cell more than once.]],
-					buttons
+Note: paths can not cross the same cell more than once.]]
 				)
 			end
 		elseif startSet and finishSet and map[startY][startX] == '.' then
-			local buttons = {'OK'}
 			local alert = love.window.showMessageBox(
 				'Alert',
-				'You need to set a start direction before the map can be exported.',
-				buttons
+				'You need to set a start direction before the map can be exported.'
 			)
 		elseif startSet and not finishSet and map[startY][startX] == '.' then
-			local buttons = {'OK'}
 			local alert = love.window.showMessageBox(
 				'Alert',
-				'You need to set a start direction and a finish before the map can be exported.',
-				buttons
+				'You need to set a start direction and a finish before the map can be exported.'
 			)
 		elseif startSet and not finishSet then
-			local buttons = {'OK'}
 			local alert = love.window.showMessageBox(
 				'Alert', 
-				'You need to set a finish before the map can be exported.',
-				buttons
+				'You need to set a finish before the map can be exported.'
 			)
 			allowExport = false
 		elseif not startSet and finishSet then
-			local buttons = {'OK'}
 			local alert = love.window.showMessageBox(
 				'Alert', 
-				'You need to set a starting point before the map can be exported.',
-				buttons
+				'You need to set a starting point before the map can be exported.'
 			)
 			allowExport = false
 		elseif not startSet and not finishSet then
-			local buttons = {'OK'}
 			local alert = love.window.showMessageBox(
 				'Alert', 
-				'You need to set a start and finish before the map can be exported.',
-				buttons
+				'You need to set a start and finish before the map can be exported.'
 			)
 			allowExport = false
 		end
@@ -107,11 +95,9 @@ Note: paths can not cross the same cell more than once.]],
 						'file://'..love.filesystem.getSaveDirectory()..'/map')
 				end
 			else
-				local buttons = {'OK'}
 				local alert = love.window.showMessageBox(
 					'Alert',
-					'There was a problem creating the map file.\nPlease try again.',
-					buttons
+					'There was a problem creating the map file.\nPlease try again.'
 				)
 			end
 		end
