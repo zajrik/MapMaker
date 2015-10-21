@@ -77,11 +77,11 @@ function love.load()
 
 	-- Bottom buttons
 	button_export = button.newButton(
-		'Export', 0, toCell(h), toCell(w) / 2)
+		'Export', 0, ToCell(h), ToCell(w) / 2)
 	button_clear = button.newButton(
-		'Clear', (toCell(w) / 2) + 1, toCell(h), (toCell(w) / 2) - 1)
+		'Clear', (ToCell(w) / 2) + 1, ToCell(h), (ToCell(w) / 2) - 1)
 	button_settings = button.newButton(
-		'Settings', 0, toCell(h) + 26, toCell(w))
+		'Settings', 0, ToCell(h) + 26, ToCell(w))
 
 	-- Button click handlers
 	clickHandler_export = 
@@ -117,7 +117,7 @@ function love.load()
 	end
 
 	-- Prepare background grid canvas and draw background grid to it
-	canvas_grid = love.graphics.newCanvas(toCell(w), toCell(h))
+	canvas_grid = love.graphics.newCanvas(ToCell(w), ToCell(h))
 	canvas_grid:renderTo(function()
 		local nextX, nextY = 0, 0
 		for y = 1, h do
@@ -137,7 +137,7 @@ function love.load()
 	end)
 
 	-- Prepare the canvas for active direction marker cells
-	canvas_activeCells = love.graphics.newCanvas(toCell(w), toCell(h))
+	canvas_activeCells = love.graphics.newCanvas(ToCell(w), ToCell(h))
 end
 
 
@@ -167,55 +167,53 @@ function love.draw()
 
 	-- Print coords on screen
 	local mouseX, mouseY = love.mouse.getPosition()
-	if toMapCoord(mouseX) > w then mouseX = w
-		else mouseX = toMapCoord(mouseX) end
-	if toMapCoord(mouseY) > h then mouseY = h
-		else mouseY = toMapCoord(mouseY) end
+	if ToMapCoord(mouseX) > w then mouseX = w
+	else mouseX = ToMapCoord(mouseX) end
+	if ToMapCoord(mouseY) > h then mouseY = h
+	else mouseY = ToMapCoord(mouseY) end
 	love.graphics.setColor(0, 0, 0, 255)
-	love.graphics.print(mouseY..','..mouseX, 3, toCell(h) - 20)
+	love.graphics.print(mouseY..','..mouseX, 3, ToCell(h) - 20)
 
 end
 
 -- Make number fit a map coord (1-index)
-function toMapCoord(number)
+function ToMapCoord(number)
 	return math.floor((number / cellSize) + 1)
 end
 
 -- Make number fit a grid coord (0-index)
-function toGridCoord(number)
+function ToGridCoord(number)
 	return math.floor((number / cellSize))
 end
 
 -- Make a coord fit a cell
-function toCell(number)
+function ToCell(number)
 	return number * cellSize
 end
 
 -- Check if direction cell overwrites finish cell, overwrite it if so
 -- Requires numbers to be map coordinates
-function checkCell(x, y)
-	if x == finishX
-		and y == finishY
-			then finishSet = false 
-			finishY = 0; finishX = 0 end
+function CheckCell(y, x)
+	if y == finishY and x == finishX then
+		finishSet = false; finishY = 0; finishX = 0 end
 end
 
 -- Center a character within a grid cell, set its background color
 -- Takes in map coords but they need to be grid coords, so subtract 1
-function cellText(text, y, x)
+function CellText(text, y, x)
 	if startX == x and startY == y and startSet then 
 		love.graphics.setColor(0, 255, 0, 255)
 	else
 		love.graphics.setColor(223, 229, 123, 255)
 	end
 	love.graphics.rectangle(
-		'fill', toCell(x - 1), toCell(y - 1), cellSize, cellSize)
+		'fill', ToCell(x - 1), ToCell(y - 1), cellSize, cellSize)
 	love.graphics.setColor(0, 0, 0, 255)
-	love.graphics.print(text, toCell(x - 1) + 10, toCell(y - 1) + 5)
+	love.graphics.print(text, ToCell(x - 1) + 10, ToCell(y - 1) + 5)
 end
 
 -- Update the activeCells canvas
-function updateCells()
+function UpdateCells()
 
 	canvas_activeCells:renderTo(function()
 		canvas_activeCells:clear()
@@ -223,19 +221,19 @@ function updateCells()
 		if startSet then
 			love.graphics.setColor(0, 255, 0, 255)
 			love.graphics.rectangle('fill', 
-				toCell(toGridCoord(clickX)),
-				toCell(toGridCoord(clickY)),
+				ToCell(ToGridCoord(clickX)),
+				ToCell(ToGridCoord(clickY)),
 				cellSize, cellSize)
 		end
 
 		-- Draw movement marker cells
 		for y = 1, #map do
 			for x = 1, #map[y] do
-				if     map[y][x] == '^' then cellText('^', y, x)
-				elseif map[y][x] == '>' then cellText('>', y, x)
-				elseif map[y][x] == 'v' then cellText('v', y, x)
-				elseif map[y][x] == '<' then cellText('<', y, x)
-				elseif map[y][x] == '*' then cellText('*', y, x)
+				if     map[y][x] == '^' then CellText('^', y, x)
+				elseif map[y][x] == '>' then CellText('>', y, x)
+				elseif map[y][x] == 'v' then CellText('v', y, x)
+				elseif map[y][x] == '<' then CellText('<', y, x)
+				elseif map[y][x] == '*' then CellText('*', y, x)
 				end
 			end
 		end
@@ -266,9 +264,9 @@ function love.mousepressed(x, y, button)
 
 			-- Clicked grid
 			else clickX = x; clickY = y 
-				startX = toMapCoord(clickX)
-				startY = toMapCoord(clickY)
-				startSet = true; updateCells()
+				startX = ToMapCoord(clickX)
+				startY = ToMapCoord(clickY)
+				startSet = true; UpdateCells()
 			end
 		end
 	end
@@ -283,18 +281,18 @@ function love.mousepressed(x, y, button)
 			-- Clicked grid
 			else rclickX = x; rclickY = y
 				-- Clicked the start cell, remove it
-				if toMapCoord(x) == startX
-					and toMapCoord(y) == startY
+				if ToMapCoord(x) == startX
+					and ToMapCoord(y) == startY
 						then startSet = false end
 
 				-- Clicked the finish cell, remove it
-				if toMapCoord(x) == finishX
-					and toMapCoord(y) == finishY
+				if ToMapCoord(x) == finishX
+					and ToMapCoord(y) == finishY
 						then finishSet = false end
 
 				-- Clicked any cell, remove it
-				map[toMapCoord(rclickY)][toMapCoord(rclickX)] = '.'
-				updateCells()
+				map[ToMapCoord(rclickY)][ToMapCoord(rclickX)] = '.'
+				UpdateCells()
 			end
 		end
 	end
@@ -320,15 +318,18 @@ function love.keypressed(key)
 	if settingsSet then
 		local x, y = love.mouse.getPosition()
 		local validPos = true
-		if toMapCoord(x) > w then validPos = false
-			else x = toMapCoord(x) end
-		if toMapCoord(y) > h then validPos = false
-			else y = toMapCoord(y) end
+
+		if ToMapCoord(x) > w then validPos = false
+		else x = ToMapCoord(x) end
+
+		if ToMapCoord(y) > h then validPos = false
+		else y = ToMapCoord(y) end
+		
 		if validPos then
-			if     key == 'w' then map[y][x] = '^';	checkCell(x, y)
-			elseif key == 'd' then map[y][x] = '>'; checkCell(x, y)
-			elseif key == 's' then map[y][x] = 'v'; checkCell(x, y)
-			elseif key == 'a' then map[y][x] = '<'; checkCell(x, y)
+			if     key == 'w' then map[y][x] = '^'; CheckCell(y, x)
+			elseif key == 'd' then map[y][x] = '>'; CheckCell(y, x)
+			elseif key == 's' then map[y][x] = 'v'; CheckCell(y, x)
+			elseif key == 'a' then map[y][x] = '<'; CheckCell(y, x)
 			elseif key == 'x' then
 				if finishSet then
 					map[finishY][finishX] = '.'
@@ -342,9 +343,10 @@ function love.keypressed(key)
 					finishSet = true
 				end
 			end
-			updateCells()
+			UpdateCells()
 		end
 	end
+	
 	-- Send keys to settings dialog
 	if not settingsSet then
 		settings.keypressed(key)
