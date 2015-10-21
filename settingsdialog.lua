@@ -121,8 +121,8 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 		love.graphics.rectangle(
 			'fill', this.x + 1, this.y + 1, this.width - 2, this.height - 2)
 		love.graphics.setColor(0, 0, 0, 255)
-		love.graphics.print('Height', this.x + 15, this.y + 1)
-		love.graphics.print('Width', this.x + 89, this.y + 1)
+		love.graphics.print('Height', this.x + 15, this.y + 3)
+		love.graphics.print('Width', this.x + 89, this.y + 3)
 
 		-- Show text boxes and button
 		textbox_height.Show(); textbox_width.Show(); button_confirm.Show()

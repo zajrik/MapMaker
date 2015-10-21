@@ -14,7 +14,7 @@ local MapMaker = {}; function MapMaker.newButton(text, x, y, width)
 		active = false
 	}
 
-	local font = love.graphics.newFont("SourceCodePro-Regular.ttf", 14)
+	local font = love.graphics.newFont(14)
 
 	-- Handle display of the button
 	function this.Show()

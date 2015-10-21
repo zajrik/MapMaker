@@ -15,7 +15,7 @@ local MapMaker = {}; function MapMaker.newTextBox(value, x, y, width)
 	}
 
 	local utf8 = require 'utf8'
-	local font = love.graphics.newFont("SourceCodePro-Regular.ttf", 14)
+	local font = love.graphics.newFont(14)
 	local timer = 0
 
 	-- Update timer
@@ -34,9 +34,9 @@ local MapMaker = {}; function MapMaker.newTextBox(value, x, y, width)
 		love.graphics.rectangle(
 			'fill', this.x + 1, this.y + 1, this.width - 2, this.height - 2)
 		love.graphics.setColor(0, 0, 0, 255)
-		love.graphics.print(this.value, this.x + 2, this.y)
+		love.graphics.print(this.value, this.x + 3, this.y + 2)
 		if timer <= .75 and this.selected then
-			love.graphics.print('|', font:getWidth(this.value) + this.x, this.y - 1)
+			love.graphics.print('|', font:getWidth(this.value) + this.x + 2, this.y + 1)
 		else end
 	end
 

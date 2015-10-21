@@ -1,10 +1,14 @@
 io.stdout:setvbuf('no')
 love.window.setTitle('Map Maker')
-font = love.graphics.newFont('SourceCodePro-Regular.ttf', 14)
+
+font_regular = love.graphics.newFont(14)
+font_small   = love.graphics.newFont(10)
+
 icon = love.graphics.newImage('icon.png')
 iconData = icon:getData()
+
 love.window.setIcon(iconData)
-love.graphics.setFont(font)
+love.graphics.setFont(font_regular)
 
 local settingsDialog = require 'settingsdialog'
 local button         = require 'button'
@@ -165,14 +169,16 @@ function love.draw()
 		settings.Show()
 	end
 
-	-- Print coords on screen
+	-- Print coords on screen in small font
+	love.graphics.setFont(font_small)
 	local mouseX, mouseY = love.mouse.getPosition()
 	if ToMapCoord(mouseX) > w then mouseX = w
 	else mouseX = ToMapCoord(mouseX) end
 	if ToMapCoord(mouseY) > h then mouseY = h
 	else mouseY = ToMapCoord(mouseY) end
 	love.graphics.setColor(0, 0, 0, 255)
-	love.graphics.print(mouseY..','..mouseX, 3, ToCell(h) - 20)
+	love.graphics.print(mouseY..','..mouseX, 2, ToCell(h) - 14)
+	love.graphics.setFont(font_regular)
 
 end
 
@@ -346,7 +352,7 @@ function love.keypressed(key)
 			UpdateCells()
 		end
 	end
-	
+
 	-- Send keys to settings dialog
 	if not settingsSet then
 		settings.keypressed(key)
