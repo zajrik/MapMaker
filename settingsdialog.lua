@@ -29,7 +29,8 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 		-- Create initial settings file with defaults
 		if not love.filesystem.exists('MapMakerSettings.lua') then
 			this.Write(8, 8)
-			this.Read()
+			return 8, 8
+			
 		-- Read settings file
 		else
 			local settingsLoader = love.filesystem.load('MapMakerSettings.lua')
