@@ -260,7 +260,7 @@ function love.mousepressed(x, y, button)
 			button_settings.mousepressed(x, y, button)
 			button_clear.mousepressed(x, y, button)
 
-            -- Clicked out of bounds
+			-- Clicked out of bounds
 			if x > w * cellSize
 				or y > h * cellSize then
 
@@ -275,28 +275,28 @@ function love.mousepressed(x, y, button)
 
 	-- Right click
 	if button == 'r' then
-		-- Clicked out of bounds
-		if x > w * cellSize 
-			or y > h * cellSize then
+		if settingsSet then
+			-- Clicked out of bounds
+			if x > w * cellSize 
+				or y > h * cellSize then
 
-		-- Clicked grid
-		else rclickX = x; rclickY = y
-			-- Clicked the start cell, remove it
-			if toMapCoord(x) == startX
-				and toMapCoord(y) == startY
-					then startSet = false end
+			-- Clicked grid
+			else rclickX = x; rclickY = y
+				-- Clicked the start cell, remove it
+				if toMapCoord(x) == startX
+					and toMapCoord(y) == startY
+						then startSet = false end
 
-			-- Clicked the finish cell, remove it
-			if toMapCoord(x) == finishX
-				and toMapCoord(y) == finishY
-					then finishSet = false end
+				-- Clicked the finish cell, remove it
+				if toMapCoord(x) == finishX
+					and toMapCoord(y) == finishY
+						then finishSet = false end
 
-			-- Clicked any cell, remove it
-			map[toMapCoord(rclickY)][toMapCoord(rclickX)] = '.'
-			updateCells()
+				-- Clicked any cell, remove it
+				map[toMapCoord(rclickY)][toMapCoord(rclickX)] = '.'
+				updateCells()
+			end
 		end
-
-
 	end
 end
 
