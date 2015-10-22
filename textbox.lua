@@ -66,7 +66,7 @@ local MapMaker = {}; function MapMaker.newTextBox(value, x, y, width)
 				this.value = string.sub(this.value, 1, offset - 1)
 				timer = 0
 			end
-		end
+		elseif key == 'tab' then timer = 0 end
 	end
 
 	return this
