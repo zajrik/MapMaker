@@ -98,6 +98,13 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 			end
 		))
 
+	-- Add textboxes to textbox table
+	local textboxes =
+	{
+		textbox_height,
+		textbox_width
+	}
+
 	-- Update timer
 	function this.update(dt)
 		textbox_height.update(dt)
@@ -132,13 +139,21 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 
 	-- Select text boxes with tab key
 	function this.TabSelect()
-		if textbox_height.selected then
-			textbox_height.selected = false
-			textbox_width.selected = true
-		else
-			textbox_height.selected = true
-			textbox_width.selected = false
+		local select = 0
+		for num, textbox in pairs(textboxes) do
+			if textbox.selected then
+				select = num
+			end
 		end
+		if select == 0 then textboxes[1].selected = true
+		else
+			select = select + 1
+			if select > #textboxes then select = 1 end
+			for i = 1, #textboxes do
+				textboxes[i].selected = false
+			end
+			textboxes[select].selected = true
+		end 
 	end
 
 	-- Handle mouse press
@@ -155,10 +170,9 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 
 	-- Handle text input
 	function this.textinput(text)
-		if textbox_height.selected then
-			textbox_height.textinput(text)
-		elseif textbox_width.selected then
-			textbox_width.textinput(text)
+		for i = 1, #textboxes do
+			if textboxes[i].selected then
+				textboxes[i].textinput(text); break end
 		end
 	end
 
@@ -171,14 +185,12 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 			this.mousereleased(button_confirm.x + 1, button_confirm.y + 1, 'l')
 		elseif key == 'escape' then
 			this.settingsChosen = true
-			textbox_height.value = textbox_height.oldValue
-			textbox_width.value = textbox_width.oldValue
+			for i = 1, #textboxes do textboxes[i].value = textboxes[i].oldValue end
 		end
 
-		if textbox_height.selected then
-			textbox_height.keypressed(key)
-		elseif textbox_width.selected then
-			textbox_width.keypressed(key)
+		for i = 1, #textboxes do
+			if textboxes[i].selected then
+				textboxes[i].keypressed(key); break end
 		end
 	end
 
