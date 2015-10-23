@@ -45,6 +45,7 @@ local rclickY, rclickX
 local exportClick
 
 local map
+local exporter
 
 function love.load()
 	settingsSet = true
@@ -91,7 +92,6 @@ function love.load()
 	clickHandler_export = 
 		event.newClickHandler((
 			function()
-				local exporter = mapExporter.newMapExporter()
 				exporter.ExportMap(
 					map, h, w, startY, startX, startSet, finishSet)
 			end
@@ -119,6 +119,9 @@ function love.load()
 			map[y][x] = '.'
 		end
 	end
+
+	-- Initialize map exporter
+	exporter = mapExporter.newMapExporter()
 
 	-- Prepare background grid canvas and draw background grid to it
 	canvas_grid = love.graphics.newCanvas(ToCell(w), ToCell(h))
@@ -218,7 +221,7 @@ function CellText(text, y, x)
 	love.graphics.print(text, ToCell(x - 1) + 10, ToCell(y - 1) + 5)
 end
 
--- Update the activeCells canvas
+-- Update the activeCells canvas and run the live map checker
 function UpdateCells()
 
 	canvas_activeCells:renderTo(function()
@@ -244,6 +247,10 @@ function UpdateCells()
 			end
 		end
 	end)
+
+	exporter.LiveChecker(map, h, w, startY, startX, startSet, finishSet)
+	if exporter.validMap then button_export.enabled = true
+	else button_export.enabled = false end
 
 end
 

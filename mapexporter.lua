@@ -7,16 +7,60 @@
 local MapMaker = {}; function MapMaker.newMapExporter()
 	
 	-- Constructor
-	local this = {}
+	local this = 
+	{
+		validMap = false
+		errorCode,
+		errorCodes
+	}
 
 	local mapChecker = require 'mapchecker'
+
+	this.errorCode
+	this.errorCodes = 
+	{
+		1 = [[MapChecker could not find a valid direction path.
+Please make sure there is a complete path from start to
+finish.
+
+Note: paths can not cross the same cell more than once.]],
+		2 = 'You need to set a start direction before the map can be exported.',
+		3 = 'You need to set a start direction and a finish before the map can be exported.',
+		4 = 'You need to set a finish before the map can be exported.',
+		5 = 'You need to set a starting point before the map can be exported.',
+		6 = 'You need to set a start and finish before the map can be exported.'
+	}
+
+	-- To be called every time a change to the map is made.
+	function this.LiveChecker(map, h, w, startY, startX, startSet, finishSet)
+		if startSet and finishSet and map[startY][startX] ~= '.' then
+			local check = mapChecker.newMapChecker(h, w, startY, startX)
+			if check.CheckMap(map) then
+				this.validMap = true; errorCode = 0
+			else errorCode = 1 end
+		elseif startSet and finishSet and map[startY][startX] == '.' then
+			errorCode = 2
+		elseif startSet and not finishSet and map[startY][startX] == '.' then
+			errorCode = 3
+		elseif startSet and not finishSet then
+			errorCode = 4
+		elseif not startSet and finishSet then
+			errorCode = 5
+		elseif not startSet and not finishSet then
+			errorCode = 6
+		end
+		if errorCode > 0 then this.validMap = false end
+	end
 
 	-- Export map after running it through MapChecker and checking
 	-- for required details (start point, finish point, start direction)
 	function this.ExportMap(map, h, w, startY, startX, startSet, finishSet)
-		local mapBuilder, allowExport
-		if startSet and finishSet and map[startY][startX] ~= '.' then
-			mapBuilder = ''
+		-- Run live checker a final time, just to be safe
+		this.LiveChecker(map, h, w, startY, startX, startSet, finishSet)
+
+		if this.validMap then
+			-- Build map string
+			local mapBuilder = ''
 			mapBuilder = mapBuilder..string.format(
 				'! h:%d; w:%d; sx:%d; sy:%d\n',
 				h, w, startY, startX)
@@ -31,58 +75,19 @@ local MapMaker = {}; function MapMaker.newMapExporter()
 					end
 				end
 			end
-			local check = mapChecker.newMapChecker(h, w, startY, startX)
-			if check.CheckMap(map) then
-				allowExport = true
-			else
-				allowExport = false
-				local alert = love.window.showMessageBox(
-					'Alert',
-					[[MapChecker could not find a valid direction path.
-Please make sure there is a complete path from start to
-finish.
 
-Note: paths can not cross the same cell more than once.]]
-				)
-			end
-		elseif startSet and finishSet and map[startY][startX] == '.' then
-			local alert = love.window.showMessageBox(
-				'Alert',
-				'You need to set a start direction before the map can be exported.'
-			)
-		elseif startSet and not finishSet and map[startY][startX] == '.' then
-			local alert = love.window.showMessageBox(
-				'Alert',
-				'You need to set a start direction and a finish before the map can be exported.'
-			)
-		elseif startSet and not finishSet then
-			local alert = love.window.showMessageBox(
-				'Alert', 
-				'You need to set a finish before the map can be exported.'
-			)
-			allowExport = false
-		elseif not startSet and finishSet then
-			local alert = love.window.showMessageBox(
-				'Alert', 
-				'You need to set a starting point before the map can be exported.'
-			)
-			allowExport = false
-		elseif not startSet and not finishSet then
-			local alert = love.window.showMessageBox(
-				'Alert', 
-				'You need to set a start and finish before the map can be exported.'
-			)
-			allowExport = false
-		end
-		if allowExport then
+			-- Create directory for generated map
 			if not love.filesystem.exists('/map') then
 				love.filesystem.createDirectory('map') end
 
+			-- Write map string to file
 			local generatedMap, errorstr = 
 				love.filesystem.newFile('/map/generatedMap.map')
 			generatedMap:open('w')
 			generatedMap:write(mapBuilder)
 			generatedMap:close()
+
+			-- Handle map write result
 			if not errorstr then
 				local buttons = {'OK', 'Cancel'}
 				local result = love.window.showMessageBox(
@@ -100,6 +105,14 @@ Note: paths can not cross the same cell more than once.]]
 					'There was a problem creating the map file.\nPlease try again.'
 				)
 			end
+
+		-- Just in case something makes it past the export
+		-- button lockout, display the last error message
+		else
+			local alert = love.window.showMessageBox(
+				'Alert',
+				errorCodes[errorCode]
+			)
 		end
 	end
 
