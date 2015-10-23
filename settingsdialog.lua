@@ -107,8 +107,7 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 
 	-- Update timer
 	function this.update(dt)
-		textbox_height.update(dt)
-		textbox_width.update(dt)
+		for i = 1, #textboxes do textboxes[i].update(dt) end
 	end
 
 	-- Handle display of the dialog
@@ -132,7 +131,8 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 		love.graphics.print('Width', this.x + 89, this.y + 3)
 
 		-- Show text boxes and button
-		textbox_height.Show(); textbox_width.Show(); button_confirm.Show()
+		for i = 1, #textboxes do textboxes[i].Show() end
+		button_confirm.Show()
 	end
 
 
@@ -140,9 +140,9 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 	-- Select text boxes with tab key
 	function this.TabSelect()
 		local select = 0
-		for num, textbox in pairs(textboxes) do
-			if textbox.selected then
-				select = num
+		for i = 1, #textboxes do
+			if textboxes[i].selected then
+				select = i
 			end
 		end
 		if select == 0 then textboxes[1].selected = true
@@ -158,8 +158,7 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 
 	-- Handle mouse press
 	function this.mousepressed(x, y, button)
-		textbox_height.mousepressed(x, y, button)
-		textbox_width.mousepressed(x, y, button)
+		for i = 1, #textboxes do textboxes[i].mousepressed(x, y, button) end
 		button_confirm.mousepressed(x, y, button)
 	end
 
