@@ -76,16 +76,16 @@ function love.load()
 	winX, winY, display = love.window.getPosition()
 
 	-- Set window size for the grid and bottom buttons
-	love.window.setMode(w * cellSize, (h * cellSize) + 51,
+	love.window.setMode(w * cellSize, (h * cellSize) + 52,
 		{display = display, x = winX, y = winY})
 
 	-- Bottom buttons
 	button_export = button.newButton(
-		'Export', 0, ToCell(h), ToCell(w) / 2)
+		'Export', 0, ToCell(h) + 1, ToCell(w) / 2, {enabled = false})
 	button_clear = button.newButton(
-		'Clear', (ToCell(w) / 2) + 1, ToCell(h), (ToCell(w) / 2) - 1)
+		'Clear', (ToCell(w) / 2) + 1, ToCell(h) + 1, (ToCell(w) / 2) - 1)
 	button_settings = button.newButton(
-		'Settings', 0, ToCell(h) + 26, ToCell(w))
+		'Settings', 0, ToCell(h) + 27, ToCell(w))
 
 	-- Button click handlers
 	clickHandler_export = 

@@ -1,8 +1,9 @@
 -- @namespace MapMaker
 -- @class Button: A clickable button. Buttons can have a dynamic
 -- width but have a fixed height of 25 pixels
-local MapMaker = {}; function MapMaker.newButton(text, x, y, width)
-	
+local MapMaker = {}; function MapMaker.newButton(text, x, y, width, ...)
+	local args = {...}
+
 	-- Constructor
 	local this = 
 	{
@@ -11,7 +12,11 @@ local MapMaker = {}; function MapMaker.newButton(text, x, y, width)
 		y      = y,
 		width  = width,
 		height = 25,
-		active = false
+		active = false,
+		enabled = 
+			((args[1] == nil) and true or 
+				((args[1].enabled == nil) and true 
+					or args[1].enabled))
 	}
 
 	local font = love.graphics.newFont(14)
@@ -31,13 +36,18 @@ local MapMaker = {}; function MapMaker.newButton(text, x, y, width)
 			(this.width / 2) - (font:getWidth(this.text) / 2) + this.x, 
 			(this.height / 2) - (font:getHeight()/2) + this.y - 1
 		)
+		if not this.enabled then
+			love.graphics.setColor(0, 0, 0, 175)
+			love.graphics.rectangle('fill', this.x, this.y, this.width, this.height)
+		end
 	end
 
 	-- Handle mouse press, show button click feedback
 	function this.mousepressed(x, y, button)
 		if x > this.x and x < this.x + width 
-			and y > this.y and y < this.y + this.height then
-				this.active = true
+			and y > this.y and y < this.y + this.height
+				and this.enabled then
+					this.active = true
 		else
 			this.active = false
 		end
@@ -47,8 +57,9 @@ local MapMaker = {}; function MapMaker.newButton(text, x, y, width)
 	function this.mousereleased(x, y, button, clickHandler)
 		this.active = false
 		if x > this.x and x < this.x + width 
-			and y > this.y and y < this.y + this.height then
-				(clickHandler)()
+			and y > this.y and y < this.y + this.height
+				and this.enabled then
+					(clickHandler)()
 		end
 	end
 	return this
