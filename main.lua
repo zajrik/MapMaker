@@ -14,7 +14,7 @@ local settingsDialog = require 'settingsdialog'
 local button         = require 'button'
 local event          = require 'clickhandler'
 
-local mapChecker  = require 'mapchecker'
+local pathChecker = require 'pathchecker'
 local mapExporter = require 'mapexporter'
 
 local winX, winY, display

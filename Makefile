@@ -8,7 +8,7 @@ FILES=\
 	textbox.lua\
 	settingsdialog.lua\
 	clickhandler.lua\
-	mapchecker.lua\
+	pathchecker.lua\
 	mapexporter.lua\
 	icon.png\
 	

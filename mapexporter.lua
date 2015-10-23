@@ -2,7 +2,7 @@
 -- @class MapExporter: 
 -- Export the drawn map to .map file. MapExporter handles the primary
 -- logic behind making sure a map contains the essentials to be read
--- by the robot, whereas MapChecker will verify that the actual path
+-- by the robot, whereas PathChecker will verify that the actual path
 -- itself is able to be followed by the robot.
 local MapMaker = {}; function MapMaker.newMapExporter()
 	
@@ -14,12 +14,12 @@ local MapMaker = {}; function MapMaker.newMapExporter()
 		errorCodes
 	}
 
-	local mapChecker = require 'mapchecker'
+	local pathChecker = require 'pathchecker'
 
 	this.errorCode
 	this.errorCodes = 
 	{
-		1 = [[MapChecker could not find a valid direction path.
+		1 = [[PathChecker could not find a valid direction path.
 Please make sure there is a complete path from start to
 finish.
 
@@ -34,8 +34,8 @@ Note: paths can not cross the same cell more than once.]],
 	-- To be called every time a change to the map is made.
 	function this.LiveChecker(map, h, w, startY, startX, startSet, finishSet)
 		if startSet and finishSet and map[startY][startX] ~= '.' then
-			local check = mapChecker.newMapChecker(h, w, startY, startX)
-			if check.CheckMap(map) then
+			local check = pathChecker.newPathChecker(h, w, startY, startX)
+			if check.CheckPath(map) then
 				this.validMap = true; errorCode = 0
 			else errorCode = 1 end
 		elseif startSet and finishSet and map[startY][startX] == '.' then
@@ -52,7 +52,7 @@ Note: paths can not cross the same cell more than once.]],
 		if errorCode > 0 then this.validMap = false end
 	end
 
-	-- Export map after running it through MapChecker and checking
+	-- Export map after running it through PathChecker and checking
 	-- for required details (start point, finish point, start direction)
 	function this.ExportMap(map, h, w, startY, startX, startSet, finishSet)
 		-- Run live checker a final time, just to be safe

@@ -1,9 +1,9 @@
 -- @namespace MapMaker
--- @class MapChecker: 
+-- @class PathChecker: 
 -- Check map for valid path. If there are any problems with the map prior
--- to parsing that primary logic misses, MapChecker will catch it. 
--- Nothing gets past MapChecker. (At least not in testing.)
-local MapMaker = {}; function MapMaker.newMapChecker(mapHeight, mapWidth, startY, startX)
+-- to parsing that primary logic misses, PathChecker will catch it. 
+-- Nothing gets past PathChecker. (At least not in testing.)
+local MapMaker = {}; function MapMaker.newPathChecker(mapHeight, mapWidth, startY, startX)
 	
 	-- Constructor
 	local this = 
@@ -24,8 +24,8 @@ local MapMaker = {}; function MapMaker.newMapChecker(mapHeight, mapWidth, startY
 		HOME  = 5
 	}
 
-	-- Start at start point, follow path, return true/false for valid/invalid map
-	function this.CheckMap(map)
+	-- Start at start point, follow path, return true/false for valid/invalid path
+	function this.CheckPath(map)
 
 		local x, y
 		local startDirection, next
