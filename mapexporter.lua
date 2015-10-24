@@ -35,20 +35,20 @@ Note: paths can not cross the same cell more than once.]],
 		if startSet and finishSet and map[startY][startX] ~= '.' then
 			local check = pathChecker.newPathChecker(h, w, startY, startX)
 			if check.CheckPath(map) then
-				this.validMap = true; errorCode = 0
-			else errorCode = 1 end
+				this.validMap = true; this.errorCode = 0
+			else this.errorCode = 1 end
 		elseif startSet and finishSet and map[startY][startX] == '.' then
-			errorCode = 2
+			this.errorCode = 2
 		elseif startSet and not finishSet and map[startY][startX] == '.' then
-			errorCode = 3
+			this.errorCode = 3
 		elseif startSet and not finishSet then
-			errorCode = 4
+			this.errorCode = 4
 		elseif not startSet and finishSet then
-			errorCode = 5
+			this.errorCode = 5
 		elseif not startSet and not finishSet then
-			errorCode = 6
+			this.errorCode = 6
 		end
-		if errorCode > 0 then this.validMap = false end
+		if this.errorCode > 0 then this.validMap = false end
 	end
 
 	-- Export map after running it through PathChecker and checking

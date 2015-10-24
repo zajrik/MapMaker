@@ -254,6 +254,16 @@ function UpdateCells()
 
 end
 
+-- Check if mouse is within the bounds of a given object
+function CheckObjectBounds(object)
+	local x, y = love.mouse.getPosition()
+	if x > object.x and y > object.y
+		and x < object.x + object.width
+		and y < object.y + object.height then
+		return true
+	else return false end
+end
+
 -- Update timer
 function love.update(dt)
 	settings.update(dt)
