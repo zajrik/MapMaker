@@ -9,26 +9,25 @@ local MapMaker = {}; function MapMaker.newMapExporter()
 	-- Constructor
 	local this = 
 	{
-		validMap = false
+		validMap = false,
 		errorCode,
 		errorCodes
 	}
 
 	local pathChecker = require 'pathchecker'
 
-	this.errorCode
-	this.errorCodes = 
+	errorCodes =
 	{
-		1 = [[PathChecker could not find a valid direction path.
+		[[PathChecker could not find a valid direction path.
 Please make sure there is a complete path from start to
 finish.
 
 Note: paths can not cross the same cell more than once.]],
-		2 = 'You need to set a start direction before the map can be exported.',
-		3 = 'You need to set a start direction and a finish before the map can be exported.',
-		4 = 'You need to set a finish before the map can be exported.',
-		5 = 'You need to set a starting point before the map can be exported.',
-		6 = 'You need to set a start and finish before the map can be exported.'
+		'You need to set a start direction before the map can be exported.',
+		'You need to set a start direction and a finish before the map can be exported.',
+		'You need to set a finish before the map can be exported.',
+		'You need to set a starting point before the map can be exported.',
+		'You need to set a start and finish before the map can be exported.'
 	}
 
 	-- To be called every time a change to the map is made.
