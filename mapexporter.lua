@@ -11,12 +11,12 @@ local MapMaker = {}; function MapMaker.newMapExporter()
 	{
 		validMap = false,
 		errorCode,
-		errorCodes
+		errorMessages
 	}
 
 	local pathChecker = require 'pathchecker'
 
-	errorCodes =
+	this.errorMessages =
 	{
 		[[PathChecker could not find a valid direction path.
 Please make sure there is a complete path from start to
@@ -110,7 +110,7 @@ Note: paths can not cross the same cell more than once.]],
 		else
 			local alert = love.window.showMessageBox(
 				'Alert',
-				errorCodes[errorCode]
+				errorMessages[errorCode]
 			)
 		end
 	end
