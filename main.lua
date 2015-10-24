@@ -183,6 +183,10 @@ function love.draw()
 	love.graphics.print(mouseY..','..mouseX, 2, ToCell(h) - 14)
 	love.graphics.setFont(font_regular)
 
+	-- if CheckObjectBounds(button_export) then
+	-- 	love.graphics.setColor(0, 0, 0, 255)
+	-- 	love.graphics.print(tostring(exporter.errorMessages[exporter.errorCode]), 5, 5)
+	-- end
 end
 
 -- Make number fit a map coord (1-index)
