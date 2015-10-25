@@ -79,12 +79,12 @@ local MapMaker = {}; function MapMaker.newTooltip(parent)
 			-- Draw tooltip box
 			love.graphics.setColor(0, 0, 0, 255)
 			love.graphics.rectangle('fill', 0, 0, width, height)
-			love.graphics.setColor(200, 200, 200, 255)
+			love.graphics.setColor(75, 75, 75, 255)
 			love.graphics.rectangle(
 				'fill', 1, 1, width - 2, height - 2)
 
 			-- Draw tooltip text
-			love.graphics.setColor(0, 0, 0, 255)
+			love.graphics.setColor(255, 255, 255, 255)
 			love.graphics.printf(
 				this.text,
 				4, 4, maxWidth, 'left')

@@ -73,7 +73,6 @@ function love.load()
 
 	-- Get height, width from settings file
 	h, w = settings.Read()
-
 	settings.currentH, settings.currentW = h, w
 
 	-- Preserve window position
@@ -127,7 +126,7 @@ function love.load()
 	exporter = mapExporter.newMapExporter()
 
 	-- Initialize tooltips
-	tooltip_export   = tooltip.newTooltip(button_export)
+	tooltip_export = tooltip.newTooltip(button_export)
 
 	-- Prepare background grid canvas and draw background grid to it
 	canvas_grid = love.graphics.newCanvas(ToCell(w), ToCell(h))
@@ -262,16 +261,6 @@ function UpdateCells()
 		tooltip_export.SetText(exporter.errorMessages[exporter.errorCode]) 
 	end
 
-end
-
--- Check if mouse is within the bounds of a given object
-function CheckObjectBounds(object)
-	local x, y = love.mouse.getPosition()
-	if x > object.x and y > object.y
-		and x < object.x + object.width
-		and y < object.y + object.height then
-		return true
-	else return false end
 end
 
 -- Update timer

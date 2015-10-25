@@ -89,12 +89,13 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 		textbox_width
 	}
 
-	-- To be called every time a key is pressed (ideally typing in a textbox)
+	-- Check the textbox values in real time
 	local function LiveChecker()
 		-- Enforce non-empty values
 		if textbox_height.value == '' or
 			textbox_width.value == '' then
-				tooltip_confirm.SetText('Grid height and width must not be empty.')
+				tooltip_confirm.SetText(
+					'Grid height and width must not be empty.')
 				button_confirm.enabled = false
 				return
 		else 
