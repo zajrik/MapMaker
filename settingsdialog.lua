@@ -75,8 +75,8 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 				this.Write(textbox_height.value, textbox_width.value)
 
 				-- Don't clear the grid if values weren't changed
-				if textbox_height.value == this.currentH 
-					and textbox_width.value == this.currentW then
+				if tonumber(textbox_height.value) == this.currentH 
+					and tonumber(textbox_width.value) == this.currentW then
 
 				else love.load() end
 			end
