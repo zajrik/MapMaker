@@ -23,6 +23,15 @@ local MapMaker = {}; function MapMaker.newTooltip(parent)
 	local width, lines
 	local height
 
+	-- Check if mouse is within the bounds of parent object
+	local function CheckParentBounds()
+		local x, y = love.mouse.getPosition()
+		return  x > this.parent.x
+			and y > this.parent.y
+			and x < this.parent.x + this.parent.width
+			and y < this.parent.y + this.parent.height
+	end
+
 	-- Add tooltip to view, show when parent is moused over
 	function this.Add()
 		if CheckParentBounds() and this.text ~= nil then
@@ -82,15 +91,6 @@ local MapMaker = {}; function MapMaker.newTooltip(parent)
 		end)
 
 		love.graphics.setFont(font_normal)
-	end
-
-	-- Check if mouse is within the bounds of parent object
-	function CheckParentBounds()
-		local x, y = love.mouse.getPosition()
-		return  x > this.parent.x
-			and y > this.parent.y
-			and x < this.parent.x + this.parent.width
-			and y < this.parent.y + this.parent.height
 	end
 
 	return this
