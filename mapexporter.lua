@@ -18,11 +18,9 @@ local MapMaker = {}; function MapMaker.newMapExporter()
 
 	this.errorMessages =
 	{
-		[[PathChecker could not find a valid direction path.
-Please make sure there is a complete path from start to
-finish.
-
-Note: paths can not cross the same cell more than once.]],
+		'PathChecker could not find a valid direction path. '..
+		'Please make sure there is a complete path from start to '..
+		'finish.\n\nNote: Paths can not cross the same cell more than once.',
 		'You need to set a start direction before the map can be exported.',
 		'You need to set a start direction and a finish before the map can be exported.',
 		'You need to set a finish before the map can be exported.',

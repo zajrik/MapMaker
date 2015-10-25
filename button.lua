@@ -33,8 +33,8 @@ local MapMaker = {}; function MapMaker.newButton(text, x, y, width, ...)
 		-- Print text, centered on button
 		love.graphics.print(
 			this.text, 
-			(this.width / 2) - (font:getWidth(this.text) / 2) + this.x, 
-			(this.height / 2) - (font:getHeight()/2) + this.y - 1
+			math.floor((this.width / 2) - (font:getWidth(this.text) / 2) + this.x), 
+			math.floor((this.height / 2) - (font:getHeight()/2) + this.y)
 		)
 		if not this.enabled then
 			love.graphics.setColor(0, 0, 0, 175)

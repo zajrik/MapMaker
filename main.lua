@@ -13,6 +13,7 @@ love.graphics.setFont(font_regular)
 local settingsDialog = require 'settingsdialog'
 local button         = require 'button'
 local event          = require 'clickhandler'
+local tooltip        = require 'tooltip'
 
 local pathChecker = require 'pathchecker'
 local mapExporter = require 'mapexporter'
@@ -32,6 +33,8 @@ local button_settings
 local clickHandler_export
 local clickHandler_clear
 local clickHandler_settings
+
+local tooltip_export
 
 local settings
 local settingsSet
@@ -123,6 +126,9 @@ function love.load()
 	-- Initialize map exporter
 	exporter = mapExporter.newMapExporter()
 
+	-- Initialize tooltips
+	tooltip_export   = tooltip.newTooltip(button_export)
+
 	-- Prepare background grid canvas and draw background grid to it
 	canvas_grid = love.graphics.newCanvas(ToCell(w), ToCell(h))
 	canvas_grid:renderTo(function()
@@ -145,6 +151,7 @@ function love.load()
 
 	-- Prepare the canvas for active direction marker cells
 	canvas_activeCells = love.graphics.newCanvas(ToCell(w), ToCell(h))
+	UpdateCells()
 end
 
 
@@ -164,15 +171,7 @@ function love.draw()
 	button_settings.Show()
 	button_clear.Show()
 
-	-- Layer settings dialog on top, centered vertically/horizontally
-	if settings.settingsChosen then
-		settingsSet = true
-	end
-	if not settingsSet then
-		settings.Show()
-	end
-
-	-- Print coords on screen in small font
+	-- Draw coordinates in bottom-left corner
 	love.graphics.setFont(font_small)
 	local mouseX, mouseY = love.mouse.getPosition()
 	if ToMapCoord(mouseX) > w then mouseX = w
@@ -183,10 +182,13 @@ function love.draw()
 	love.graphics.print(mouseY..','..mouseX, 2, ToCell(h) - 14)
 	love.graphics.setFont(font_regular)
 
-	-- if CheckObjectBounds(button_export) then
-	-- 	love.graphics.setColor(0, 0, 0, 255)
-	-- 	love.graphics.print(tostring(exporter.errorMessages[exporter.errorCode]), 5, 5)
-	-- end
+	-- Add tooltips to view
+	if settingsSet then tooltip_export.Add() end
+
+	-- Layer settings dialog on top, centered vertically/horizontally on grid
+	if settings.settingsChosen then settingsSet = true end
+	if not settingsSet then settings.Show() end
+
 end
 
 -- Make number fit a map coord (1-index)
@@ -254,7 +256,11 @@ function UpdateCells()
 
 	exporter.LiveChecker(map, h, w, startY, startX, startSet, finishSet)
 	if exporter.validMap then button_export.enabled = true
-	else button_export.enabled = false end
+		tooltip_export.SetText(nil) 
+	else
+		button_export.enabled = false
+		tooltip_export.SetText(exporter.errorMessages[exporter.errorCode]) 
+	end
 
 end
 
@@ -287,7 +293,7 @@ function love.mousepressed(x, y, button)
 
 			-- Clicked out of bounds
 			if x > w * cellSize
-				or y > h * cellSize then
+				or y > (h * cellSize) - 1 then
 
 			-- Clicked grid
 			else clickX = x; clickY = y 
@@ -303,7 +309,7 @@ function love.mousepressed(x, y, button)
 		if settingsSet then
 			-- Clicked out of bounds
 			if x > w * cellSize 
-				or y > h * cellSize then
+				or y > (h * cellSize) - 1 then
 
 			-- Clicked grid
 			else rclickX = x; rclickY = y

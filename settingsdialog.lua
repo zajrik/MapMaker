@@ -54,8 +54,8 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 	-- Get height, width from settings file for dialog positioning
 	local valueY, valueX = this.Read()
 	this.y, this.x = this.Read()
-	this.y = (((this.y / 2) * 30) - (this.height / 2))
-	this.x = (((this.x / 2) * 30) - (this.width / 2))
+	this.y = math.floor(((this.y / 2) * 30) - (this.height / 2))
+	this.x = math.floor(((this.x / 2) * 30) - (this.width / 2))
 
 	-- Initialize text boxes, confirm button, confirm button click handler
 	textbox_height = text.newTextBox(valueY, this.x + 5, this.y + 20, 67)

@@ -7,6 +7,7 @@ FILES=\
 	button.lua\
 	textbox.lua\
 	settingsdialog.lua\
+	tooltip.lua\
 	clickhandler.lua\
 	pathchecker.lua\
 	mapexporter.lua\
