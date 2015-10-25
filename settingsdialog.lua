@@ -17,10 +17,13 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 	local text   = require 'textbox'
 	local button = require 'button'
 	local event  = require 'clickhandler'
+	local tooltip = require 'tooltip'
 
 	local textbox_height
 	local textbox_width
 	local button_confirm
+
+	local tooltip_confirm
 
 	local clickHandler_confirm
 
@@ -63,38 +66,19 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 	button_confirm = button.newButton(
 		'OK', this.x + 10, this.y + this.height - 30, this.width - 20)
 
+	tooltip_confirm = tooltip.newTooltip(button_confirm)
+
 	clickHandler_confirm = 
 		event.newClickHandler((
 			function()
-				-- Enforce non-empty values
-				if textbox_height.value == '' or
-					textbox_width.value == '' then
-						local alert = love.window.showMessageBox(
-							'Alert',
-							'You must set a value.'
-						)
-						return
-				end
+				this.settingsChosen = true
+				this.Write(textbox_height.value, textbox_width.value)
 
-				-- Enforce min/max values
-				if  tonumber(textbox_height.value) >= 8 
-				and tonumber(textbox_height.value) <= 25
-				and tonumber(textbox_width.value)  >= 8 
-				and tonumber(textbox_width.value)  <= 25 then
-					this.settingsChosen = true
-					this.Write(textbox_height.value, textbox_width.value)
+				-- Don't clear the grid if values weren't changed
+				if textbox_height.value == this.currentH 
+					and textbox_width.value == this.currentW then
 
-					-- Don't clear the grid if values weren't changed
-					if textbox_height.value == this.currentH 
-						and textbox_width.value == this.currentW then
-
-					else love.load() end
-				else
-					local alert = love.window.showMessageBox(
-						'Alert',
-						'Grid height and width must be between 8 and 25.'
-					)
-				end
+				else love.load() end
 			end
 		))
 
@@ -104,6 +88,33 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 		textbox_height,
 		textbox_width
 	}
+
+	-- To be called every time a key is pressed (ideally typing in a textbox)
+	local function LiveChecker()
+		-- Enforce non-empty values
+		if textbox_height.value == '' or
+			textbox_width.value == '' then
+				tooltip_confirm.SetText('Grid height and width must not be empty.')
+				button_confirm.enabled = false
+				return
+		else 
+			button_confirm.enabled = true
+			tooltip_confirm.SetText(nil)
+		end
+
+		-- Enforce min/max values
+		if not (tonumber(textbox_height.value) >= 8 
+			and tonumber(textbox_height.value) <= 25
+			and tonumber(textbox_width.value) >= 8 
+			and tonumber(textbox_width.value) <= 25) then
+				tooltip_confirm.SetText(
+					'Grid height and width must be between 8 and 25')
+				button_confirm.enabled = false
+		else 
+			button_confirm.enabled = true
+			tooltip_confirm.SetText(nil)
+		end
+	end
 
 	-- Update timer
 	function this.update(dt)
@@ -133,6 +144,9 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 		-- Show text boxes and button
 		for i = 1, #textboxes do textboxes[i].Show() end
 		button_confirm.Show()
+
+		tooltip_confirm.Add()
+		LiveChecker()
 	end
 
 
