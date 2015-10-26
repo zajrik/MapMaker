@@ -60,9 +60,10 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 	this.y = math.floor(((this.y / 2) * 30) - (this.height / 2))
 	this.x = math.floor(((this.x / 2) * 30) - (this.width / 2))
 
-	-- Initialize text boxes, confirm button, confirm button click handler
+	-- Initialize dialog components
 	textbox_height = text.newTextBox(valueY, this.x + 5, this.y + 20, 67)
 	textbox_width  = text.newTextBox(valueX, this.x + this.width - 72, this.y + 20, 67)
+	
 	button_confirm = button.newButton(
 		'OK', this.x + 10, this.y + this.height - 30, this.width - 20)
 

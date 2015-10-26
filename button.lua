@@ -23,19 +23,23 @@ local MapMaker = {}; function MapMaker.newButton(text, x, y, width, ...)
 
 	-- Handle display of the button
 	function this.Show()
+		-- Draw button
 		if this.active then
 			love.graphics.setColor(30, 30, 30, 255)
 		else
 			love.graphics.setColor(50, 50, 50, 255)
 		end
 		love.graphics.rectangle('fill', this.x, this.y, this.width, this.height)
-		love.graphics.setColor(255, 255, 255, 255)
+
 		-- Print text, centered on button
+		love.graphics.setColor(255, 255, 255, 255)
 		love.graphics.print(
 			this.text, 
 			math.floor((this.width / 2) - (font:getWidth(this.text) / 2) + this.x), 
 			math.floor((this.height / 2) - (font:getHeight()/2) + this.y)
 		)
+
+		-- Draw disabled button overlay
 		if not this.enabled then
 			love.graphics.setColor(0, 0, 0, 175)
 			love.graphics.rectangle('fill', this.x, this.y, this.width, this.height)

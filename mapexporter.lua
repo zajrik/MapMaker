@@ -77,12 +77,17 @@ local MapMaker = {}; function MapMaker.newMapExporter()
 			if not love.filesystem.exists('/map') then
 				love.filesystem.createDirectory('map') end
 
+			-- TODO: Timestamp in generated map file name?
+
 			-- Write map string to file
 			local generatedMap, errorstr = 
 				love.filesystem.newFile('/map/generatedMap.map')
 			generatedMap:open('w')
 			generatedMap:write(mapBuilder)
 			generatedMap:close()
+
+			-- TODO: Handle map creation result with something less intrusive
+			--       than an alert. Maybe a clickable toast?
 
 			-- Handle map write result
 			if not errorstr then

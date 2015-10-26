@@ -26,15 +26,22 @@ local MapMaker = {}; function MapMaker.newTextBox(value, x, y, width)
 
 	-- Handle display of the text box
 	function this.Show()
+		-- Draw border rectangle
 		if this.selected then love.graphics.setColor(0, 0, 0, 255) 
 		else love.graphics.setColor(150, 150, 150, 255) end
 		love.graphics.rectangle(
 			'fill', this.x, this.y, this.width, this.height)
+		
+		-- Draw bg rectangle
 		love.graphics.setColor(255, 255, 255, 255)
 		love.graphics.rectangle(
 			'fill', this.x + 1, this.y + 1, this.width - 2, this.height - 2)
+
+		-- Draw textbox text
 		love.graphics.setColor(0, 0, 0, 255)
 		love.graphics.print(this.value, this.x + 3, this.y + 2)
+
+		-- Draw text cursor
 		if timer <= .75 and this.selected then
 			love.graphics.print('|', font:getWidth(this.value) + this.x + 2, this.y + 1)
 		else end

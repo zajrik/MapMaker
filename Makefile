@@ -1,4 +1,4 @@
-BUILD_NAME=MapMaker.love
+BUILD_NAME=MapMaker
 
 # List of files to compile. End filenames
 # with a backslash to escape line breaks
@@ -19,4 +19,4 @@ all:
 	love-release -L -r $(BUILD_DIR) $(FILES)
 
 clean:
-	rm -rf $(BUILD_DIR)/$(BUILD_NAME)
+	rm -rf $(BUILD_DIR)/$(BUILD_NAME).love

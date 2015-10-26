@@ -65,9 +65,7 @@ local MapMaker = {}; function MapMaker.newPathChecker(mapHeight, mapWidth, start
 			elseif map[y][x] == '*' then next = Direction.HOME
 				if this.startY == y and this.startX == x then
 					return false
-				else
-					foundEnd = true
-				end
+				else foundEnd = true end
 			elseif map[y][x] == '.' then return false
 			else end
 
