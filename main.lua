@@ -266,6 +266,7 @@ end
 -- Update timer
 function love.update(dt)
 	settings.update(dt)
+	tooltip_export.update(dt)
 end
 
 -- Mouse pressed event listener

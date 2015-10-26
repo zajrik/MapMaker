@@ -16,12 +16,16 @@ local MapMaker = {}; function MapMaker.newTooltip(parent)
 	local font_normal = love.graphics.newFont(14)
 	local font_medium = love.graphics.newFont(11)
 
-	local canvas_tooltip
+	local canvas_tooltip = love.graphics.newCanvas(2, 2)
 
 	local maxWidth = 200
 	local x, y
 	local width, lines
 	local height
+
+	local maxTimer, timer = .075, 0
+	local alpha = 0
+	local visible = false
 
 	-- Check if mouse is within the bounds of parent object
 	local function CheckParentBounds()
@@ -34,10 +38,9 @@ local MapMaker = {}; function MapMaker.newTooltip(parent)
 
 	-- Add tooltip to view, show when parent is moused over
 	function this.Add()
-		if CheckParentBounds() and this.text ~= nil then
-			love.graphics.setColor(255, 255, 255, 255)
-			love.graphics.draw(canvas_tooltip, x, y)
-		end
+		visible = (CheckParentBounds() and this.text ~= nil)
+		love.graphics.setColor(255, 255, 255, alpha)
+		love.graphics.draw(canvas_tooltip, x, y)
 	end
 
 	-- Set the tooltip text and re-initialize the tooltip canvas
@@ -91,6 +94,13 @@ local MapMaker = {}; function MapMaker.newTooltip(parent)
 		end)
 
 		love.graphics.setFont(font_normal)
+	end
+
+	function this.update(dt)
+		timer = (visible and timer + dt or timer - dt)
+		timer = math.max(0, math.min(timer, maxTimer))
+		local percent = timer / maxTimer
+		alpha = 255 * percent
 	end
 
 	return this

@@ -121,6 +121,7 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 	-- Update timer
 	function this.update(dt)
 		for i = 1, #textboxes do textboxes[i].update(dt) end
+		tooltip_confirm.update(dt)
 	end
 
 	-- Handle display of the dialog
