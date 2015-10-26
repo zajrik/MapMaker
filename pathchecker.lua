@@ -54,6 +54,9 @@ local MapMaker = {}; function MapMaker.newPathChecker(mapHeight, mapWidth, start
 			end
 
 			if y < 1 or x < 1 then return false end
+			if y > this.mapHeight
+				or x > this.mapWidth then
+					return false end
 
 			if     map[y][x] == '^' then next = Direction.NORTH
 			elseif map[y][x] == '>' then next = Direction.EAST
