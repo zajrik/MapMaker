@@ -173,10 +173,8 @@ function love.draw()
 	-- Draw coordinates in bottom-left corner
 	love.graphics.setFont(font_small)
 	local mouseX, mouseY = love.mouse.getPosition()
-	if ToMapCoord(mouseX) > w then mouseX = w
-	else mouseX = ToMapCoord(mouseX) end
-	if ToMapCoord(mouseY) > h then mouseY = h
-	else mouseY = ToMapCoord(mouseY) end
+	mouseX = InRange(ToMapCoord(mouseX), 1, w)
+	mouseY = InRange(ToMapCoord(mouseY), 1, h)
 	love.graphics.setColor(0, 0, 0, 255)
 	love.graphics.print(mouseY..','..mouseX, 2, ToCell(h) - 14)
 	love.graphics.setFont(font_regular)
@@ -203,6 +201,11 @@ end
 -- Make a coord fit a cell
 function ToCell(number)
 	return number * cellSize
+end
+
+-- Ensure a number stays inside min/max boundaries
+function InRange(num, min, max)
+	return math.max(min, math.min(num, max))
 end
 
 -- Check if direction cell overwrites finish cell, overwrite it if so
@@ -254,12 +257,9 @@ function UpdateCells()
 	end)
 
 	exporter.LiveChecker(map, h, w, startY, startX, startSet, finishSet)
-	if exporter.validMap then button_export.enabled = true
-		tooltip_export.SetText(nil) 
-	else
-		button_export.enabled = false
-		tooltip_export.SetText(exporter.errorMessages[exporter.errorCode]) 
-	end
+	button_export.enabled = exporter.validMap
+	tooltip_export.SetText(
+		(exporter.validMap and nil or exporter.errorMessages[exporter.errorCode]))
 
 end
 
