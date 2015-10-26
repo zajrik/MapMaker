@@ -36,6 +36,11 @@ local MapMaker = {}; function MapMaker.newTooltip(parent)
 			and y < this.parent.y + this.parent.height
 	end
 
+	-- Ensure a number stays inside min/max boundaries
+	local function InRange(num, min, max)
+		return math.max(min, math.min(num, max))
+	end
+
 	-- Add tooltip to view, show when parent is moused over
 	function this.Add()
 		visible = (CheckParentBounds() and this.text ~= nil)
@@ -63,10 +68,8 @@ local MapMaker = {}; function MapMaker.newTooltip(parent)
 
 		-- Enforce drawing within window bounds
 		winW, winH = love.window.getDimensions()
-		if x < 0 then x = 5 end
-		if y < 0 then y = 5 end
-		if x + width > winW then x = (winW - width) - 5 end
-		if y + height > winH - 52 then y = (winH - height) - 57 end
+		x = InRange(x, 5, (winW - width) - 5)
+		y = InRange(y, 5, (winH - height) - 57)
 
 		-- Move tooltip to lower left corner if it obscures parent
 		if      x < this.parent.x + this.parent.width
@@ -97,8 +100,7 @@ local MapMaker = {}; function MapMaker.newTooltip(parent)
 	end
 
 	function this.update(dt)
-		timer = (visible and timer + dt or timer - dt)
-		timer = math.max(0, math.min(timer, maxTimer))
+		timer = InRange((visible and timer + dt or timer - dt), 0, maxTimer)
 		local percent = timer / maxTimer
 		alpha = 255 * percent
 	end
