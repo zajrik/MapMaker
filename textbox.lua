@@ -8,9 +8,9 @@ local MapMaker = {}; function MapMaker.newTextBox(value, x, y, width)
 		x        = x,
 		y        = y,
 		width    = width,
+		height   = 20,
 		value    = value,
 		oldValue = value,
-		height   = 20,
 		selected = false
 	}
 
@@ -42,9 +42,8 @@ local MapMaker = {}; function MapMaker.newTextBox(value, x, y, width)
 		love.graphics.print(this.value, this.x + 3, this.y + 2)
 
 		-- Draw text cursor
-		if timer <= .75 and this.selected then
-			love.graphics.print('|', font:getWidth(this.value) + this.x + 2, this.y + 1)
-		else end
+		if timer <= .75 and this.selected then love.graphics.print(
+			'|', font:getWidth(this.value) + this.x + 2, this.y + 1) end
 	end
 
 	-- Handle mouse press

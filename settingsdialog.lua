@@ -93,29 +93,18 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 	-- Check the textbox values in real time
 	local function LiveChecker()
 		-- Enforce non-empty values
-		if textbox_height.value == '' or
-			textbox_width.value == '' then
-				tooltip_confirm.SetText(
-					'Grid height and width must not be empty.')
-				button_confirm.enabled = false
-				return
-		else 
-			button_confirm.enabled = true
-			tooltip_confirm.SetText(nil)
-		end
-
+		button_confirm.enabled = not (textbox_height.value == '' or textbox_width.value == '')
+		tooltip_confirm.SetText((not button_confirm.enabled) and
+			'Grid height and width must not be empty.' or nil)
+		if not button_confirm.enabled then return end
+	
 		-- Enforce min/max values
-		if not (tonumber(textbox_height.value) >= 8 
+		button_confirm.enabled = (tonumber(textbox_height.value) >= 8
 			and tonumber(textbox_height.value) <= 25
-			and tonumber(textbox_width.value) >= 8 
-			and tonumber(textbox_width.value) <= 25) then
-				tooltip_confirm.SetText(
-					'Grid height and width must be between 8 and 25')
-				button_confirm.enabled = false
-		else 
-			button_confirm.enabled = true
-			tooltip_confirm.SetText(nil)
-		end
+			and tonumber(textbox_width.value) >= 8
+			and tonumber(textbox_width.value) <= 25)
+		tooltip_confirm.SetText((not button_confirm.enabled) and
+			'Grid height and width must be between 8 and 25.' or nil)
 	end
 
 	-- Update timer
@@ -159,7 +148,7 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 		local select = 0
 		for i = 1, #textboxes do
 			if textboxes[i].selected then
-				select = i
+				select = i; break
 			end
 		end
 		if select == 0 then textboxes[1].selected = true

@@ -40,6 +40,13 @@ local MapMaker = {}; function MapMaker.newTooltip(parent)
 	local function InRange(num, min, max)
 		return math.max(min, math.min(num, max))
 	end
+	
+	-- Update timer
+	function this.update(dt)
+		timer = InRange((visible and timer + dt or timer - dt), 0, maxTimer)
+		local percent = timer / maxTimer
+		alpha = 255 * percent
+	end
 
 	-- Add tooltip to view, show when parent is moused over
 	function this.Add()
@@ -97,12 +104,6 @@ local MapMaker = {}; function MapMaker.newTooltip(parent)
 		end)
 
 		love.graphics.setFont(font_normal)
-	end
-
-	function this.update(dt)
-		timer = InRange((visible and timer + dt or timer - dt), 0, maxTimer)
-		local percent = timer / maxTimer
-		alpha = 255 * percent
 	end
 
 	return this
