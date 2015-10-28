@@ -153,7 +153,7 @@ function love.load()
 	-- Prepare the canvas for active direction marker cells
 	canvas_activeCells = love.graphics.newCanvas(ToCell(w), ToCell(h))
 
-	-- Prepare the cell arrow canvas and draw the arrow
+	-- Prepare the cell marker canvases and draw their markers
 	canvas_arrow = love.graphics.newCanvas(cellSize, cellSize)
 	canvas_arrow:renderTo(function()
 		love.graphics.setLineWidth(2)
@@ -161,8 +161,6 @@ function love.load()
 		love.graphics.line(8,16,  15,8,  22,16)
 		love.graphics.line(15,10,  15,22)
 	end)
-
-	-- Prepare the finish cell canvas and draw the star
 	canvas_star = love.graphics.newCanvas(cellSize, cellSize)
 	canvas_star:renderTo(function()
 		love.graphics.setLineWidth(2)
@@ -230,14 +228,13 @@ function InRange(num, min, max)
 end
 
 -- Check if direction cell overwrites finish cell, overwrite it if so
--- Requires numbers to be map coordinates
+-- Parameters must be map coordinates
 function CheckCell(y, x)
 	if y == finishY and x == finishX then
 		finishSet = false; finishY = 0; finishX = 0 end
 end
 
--- Center a character within a grid cell, set its background color
--- Takes in map coords but they need to be grid coords, so subtract 1
+-- Draw the chosen movement cell marker
 function MarkCell(dir, y, x)
 	-- Draw cell background
 	if startX == x and startY == y and startSet then 
@@ -249,7 +246,7 @@ function MarkCell(dir, y, x)
 		'fill', ToCell(x - 1), ToCell(y - 1), cellSize, cellSize)
 	love.graphics.setColor(0, 0, 0, 255)
 
-	-- Draw arrow canvas
+	-- Draw cell markers
 	local y, x, r = y, x, 0
 	if     dir == '^' then y, x, r = y-1, x-1, 0
 	elseif dir == '>' then y, x, r = y-1, x,   90
@@ -278,12 +275,7 @@ function UpdateCells()
 		-- Draw movement marker cells
 		for y = 1, #map do
 			for x = 1, #map[y] do
-				if     map[y][x] == '^' then MarkCell('^', y, x)
-				elseif map[y][x] == '>' then MarkCell('>', y, x)
-				elseif map[y][x] == 'v' then MarkCell('v', y, x)
-				elseif map[y][x] == '<' then MarkCell('<', y, x)
-				elseif map[y][x] == '*' then MarkCell('*', y, x)
-				end
+				if map[y][x] ~= '.' then MarkCell(map[y][x], y, x) end
 			end
 		end
 	end)
