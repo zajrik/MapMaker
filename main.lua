@@ -25,6 +25,8 @@ local cellSize = 30
 
 local canvas_grid
 local canvas_activeCells
+local canvas_arrow
+local canvas_star
 
 local button_export
 local button_clear
@@ -150,6 +152,25 @@ function love.load()
 
 	-- Prepare the canvas for active direction marker cells
 	canvas_activeCells = love.graphics.newCanvas(ToCell(w), ToCell(h))
+
+	-- Prepare the cell arrow canvas and draw the arrow
+	canvas_arrow = love.graphics.newCanvas(cellSize, cellSize)
+	canvas_arrow:renderTo(function()
+		love.graphics.setLineWidth(2)
+		love.graphics.setColor(0, 0, 0, 255)
+		love.graphics.line(8,16,  15,8,  22,16)
+		love.graphics.line(15,10,  15,22)
+	end)
+
+	-- Prepare the finish cell canvas and draw the star
+	canvas_star = love.graphics.newCanvas(cellSize, cellSize)
+	canvas_star:renderTo(function()
+		love.graphics.setLineWidth(2)
+		love.graphics.setColor(0, 0, 0, 255)
+		love.graphics.line(9,11,  21,19)
+		love.graphics.line(9,19,  21,11)
+		love.graphics.line(15,8,  15,22)
+	end)
 	UpdateCells()
 end
 
@@ -217,7 +238,8 @@ end
 
 -- Center a character within a grid cell, set its background color
 -- Takes in map coords but they need to be grid coords, so subtract 1
-function CellText(text, y, x)
+function MarkCell(dir, y, x)
+	-- Draw cell background
 	if startX == x and startY == y and startSet then 
 		love.graphics.setColor(0, 255, 0, 255)
 	else
@@ -226,7 +248,17 @@ function CellText(text, y, x)
 	love.graphics.rectangle(
 		'fill', ToCell(x - 1), ToCell(y - 1), cellSize, cellSize)
 	love.graphics.setColor(0, 0, 0, 255)
-	love.graphics.print(text, ToCell(x - 1) + 10, ToCell(y - 1) + 5)
+
+	-- Draw arrow canvas
+	local y, x, r = y, x, 0
+	if     dir == '^' then y, x, r = y-1, x-1, 0
+	elseif dir == '>' then y, x, r = y-1, x,   90
+	elseif dir == 'v' then y, x, r = y,   x,   180
+	elseif dir == '<' then y, x, r = y,   x-1, 270
+	elseif dir == '*' then love.graphics.draw(
+		canvas_star, ToCell(x - 1), ToCell(y - 1)) end
+	if dir ~= '*' then love.graphics.draw(
+		canvas_arrow, ToCell(x), ToCell(y), math.rad(r)) end
 end
 
 -- Update the activeCells canvas and run the live map checker
@@ -246,11 +278,11 @@ function UpdateCells()
 		-- Draw movement marker cells
 		for y = 1, #map do
 			for x = 1, #map[y] do
-				if     map[y][x] == '^' then CellText('^', y, x)
-				elseif map[y][x] == '>' then CellText('>', y, x)
-				elseif map[y][x] == 'v' then CellText('v', y, x)
-				elseif map[y][x] == '<' then CellText('<', y, x)
-				elseif map[y][x] == '*' then CellText('*', y, x)
+				if     map[y][x] == '^' then MarkCell('^', y, x)
+				elseif map[y][x] == '>' then MarkCell('>', y, x)
+				elseif map[y][x] == 'v' then MarkCell('v', y, x)
+				elseif map[y][x] == '<' then MarkCell('<', y, x)
+				elseif map[y][x] == '*' then MarkCell('*', y, x)
 				end
 			end
 		end
