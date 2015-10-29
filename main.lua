@@ -315,7 +315,7 @@ end
 
 -- Mouse pressed event listener
 function love.mousepressed(x, y, button)
-	-- Left click
+	-- Handle left click
 	if button == 'l' then
 		-- Pass mouse presses to settings dialog
 		settings.mousepressed(x, y, button)
@@ -338,7 +338,7 @@ function love.mousepressed(x, y, button)
 		end
 	end
 
-	-- Right click
+	-- Handle right click
 	if button == 'r' then
 		if settingsSet then
 			-- Clicked out of bounds

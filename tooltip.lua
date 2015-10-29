@@ -4,6 +4,7 @@
 -- text has been set. The tooltip will be centered above the parent object
 -- unless forced to overlap the parent object by window constraints, in
 -- which case it will be moved to the lower left-hand corner of the grid.
+-- The tooltip text can be changed via the SetText() method.
 local MapMaker = {}; function MapMaker.newTooltip(parent)
 	
 	-- Constructor
