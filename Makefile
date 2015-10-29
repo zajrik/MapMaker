@@ -8,6 +8,7 @@ FILES=\
 	textbox.lua\
 	settingsdialog.lua\
 	tooltip.lua\
+	toast.lua\
 	clickhandler.lua\
 	pathchecker.lua\
 	mapexporter.lua\
