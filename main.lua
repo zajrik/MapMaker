@@ -177,6 +177,12 @@ function love.load()
 	UpdateCells()
 end
 
+-- Update timer
+function love.update(dt)
+	settings.update(dt)
+	tooltip_export.update(dt)
+	debug_update = debug_update + dt
+end
 
 -- Draw all the things, constantly, forever
 function love.draw()
@@ -305,13 +311,6 @@ function UpdateCells()
 	tooltip_export.SetText(
 		(exporter.validMap and nil or exporter.errorMessages[exporter.errorCode]))
 
-end
-
--- Update timer
-function love.update(dt)
-	settings.update(dt)
-	tooltip_export.update(dt)
-	debug_update = debug_update + dt
 end
 
 -- Mouse pressed event listener
