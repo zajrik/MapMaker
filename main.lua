@@ -1,6 +1,11 @@
 io.stdout:setvbuf('no')
 love.window.setTitle('Map Maker')
 
+local debug = false
+local debug_update = 0
+local debug_mem = 0
+local debug_fps = 0
+
 font_regular = love.graphics.newFont(14)
 font_small   = love.graphics.newFont(10)
 
@@ -189,21 +194,36 @@ function love.draw()
 	button_settings.Show()
 	button_clear.Show()
 
-	-- Draw coordinates in bottom-left corner
-	love.graphics.setFont(font_small)
-	local mouseX, mouseY = love.mouse.getPosition()
-	mouseX = InRange(ToMapCoord(mouseX), 1, w)
-	mouseY = InRange(ToMapCoord(mouseY), 1, h)
-	love.graphics.setColor(0, 0, 0, 255)
-	love.graphics.print(mouseY..','..mouseX, 2, ToCell(h) - 14)
-	love.graphics.setFont(font_regular)
-
 	-- Add tooltips to view
 	if settingsSet then tooltip_export.Add() end
 
 	-- Layer settings dialog on top, centered vertically/horizontally on grid
 	if settings.settingsChosen then settingsSet = true end
 	if not settingsSet then settings.Show() end
+
+	-- Draw debug info
+	if debug then
+		-- Draw coordinates in bottom-left corner
+		love.graphics.setFont(font_small)
+		local mouseX, mouseY = love.mouse.getPosition()
+		mouseX = InRange(ToMapCoord(mouseX), 1, w)
+		mouseY = InRange(ToMapCoord(mouseY), 1, h)
+		love.graphics.setColor(0, 0, 0, 255)
+		love.graphics.print(mouseY..','..mouseX, 2, ToCell(h) - 14)
+		
+		-- Draw memory usage, fps
+		love.graphics.print(
+			'Lua Memory Usage: '..string.format('%d',debug_mem)..' KB', 5, 3)
+		love.graphics.print('FPS: '..debug_fps, 5, 13)
+		love.graphics.setFont(font_regular)
+
+		-- Update debug information
+		if debug_update >= 1 then
+			debug_mem = collectgarbage('count')
+			debug_fps = love.timer.getFPS()
+			debug_update = 0
+		end
+	end
 
 end
 
@@ -291,6 +311,7 @@ end
 function love.update(dt)
 	settings.update(dt)
 	tooltip_export.update(dt)
+	debug_update = debug_update + dt
 end
 
 -- Mouse pressed event listener
@@ -392,6 +413,9 @@ function love.keypressed(key)
 			end
 			UpdateCells()
 		end
+
+		if love.keyboard.isDown('lctrl') and key == 'g' then 
+			debug = not debug end
 	end
 
 	-- Send keys to settings dialog

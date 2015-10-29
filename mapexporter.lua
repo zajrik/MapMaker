@@ -39,12 +39,9 @@ local MapMaker = {}; function MapMaker.newMapExporter()
 			this.errorCode = 2
 		elseif startSet and not finishSet and map[startY][startX] == '.' then
 			this.errorCode = 3
-		elseif startSet and not finishSet then
-			this.errorCode = 4
-		elseif not startSet and finishSet then
-			this.errorCode = 5
-		elseif not startSet and not finishSet then
-			this.errorCode = 6
+		elseif startSet and not finishSet then this.errorCode = 4
+		elseif not startSet and finishSet then this.errorCode = 5
+		elseif not startSet and not finishSet then this.errorCode = 6
 		end
 		if this.errorCode > 0 then this.validMap = false end
 	end
