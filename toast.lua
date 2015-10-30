@@ -69,10 +69,21 @@ local MapMaker = {}; function MapMaker.newToast(text, clickHandler, duration)
 		return math.max(min, math.min(num, max))
 	end
 
+	-- Check for toast mouseover
+	local function Mouseover()
+		local mx, my = love.mouse.getPosition()
+		return visible
+			and mx > x and my > y
+			and mx < x + width
+			and my < y + height
+	end
+
 	-- Update timer
 	function this.update(dt)
-		durationTimer = (visible and durationTimer - dt or 0)
+		durationTimer = ((visible and not Mouseover()) 
+			and durationTimer - dt or durationTimer)
 		visible = durationTimer > 0
+
 		timer = InRange((visible and timer + dt or timer - dt), 0, maxTimer)
 		local percent = timer / maxTimer
 		alpha = 255 * percent
@@ -99,7 +110,6 @@ local MapMaker = {}; function MapMaker.newToast(text, clickHandler, duration)
 	function this.IsActive()
 		return active
 	end
-
 
 	-- Handle mouse press, show button click feedback
 	function this.mousepressed(clickx, clicky, button)
