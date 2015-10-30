@@ -5,11 +5,12 @@ local MapMaker = {}; function MapMaker.newTextBox(value, x, y, width)
 	-- Constructor
 	local this = 
 	{
+		value    = value,
 		x        = x,
 		y        = y,
 		width    = width,
+
 		height   = 20,
-		value    = value,
 		oldValue = value,
 		selected = false
 	}

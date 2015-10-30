@@ -10,7 +10,7 @@ local MapMaker = {}; function MapMaker.newTooltip(parent)
 	-- Constructor
 	local this = 
 	{
-		parent = parent,
+		parent = parent or nil,
 		text = nil
 	}
 
@@ -27,6 +27,9 @@ local MapMaker = {}; function MapMaker.newTooltip(parent)
 	local maxTimer, timer = .075, 0
 	local alpha = 0
 	local visible = false
+
+	-- Error if missing parent
+	assert(parent ~= nil, "Tooltip requires a parent object.")
 
 	-- Check if mouse is within the bounds of parent object
 	local function CheckParentBounds()

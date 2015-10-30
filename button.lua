@@ -7,16 +7,17 @@ local MapMaker = {}; function MapMaker.newButton(text, x, y, width, ...)
 	-- Constructor
 	local this = 
 	{
-		text   = text,
-		x      = x,
-		y      = y,
-		width  = width,
-		height = 25,
-		active = false,
+		text    = text,
+		x       = x,
+		y       = y,
+		width   = width,
 		enabled = 
 			((args[1] == nil) and true or 
 				((args[1].enabled == nil) and true 
-					or args[1].enabled))
+					or args[1].enabled)),
+
+		height = 25,
+		active = false
 	}
 
 	local font = love.graphics.newFont(14)
