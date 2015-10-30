@@ -32,7 +32,7 @@ local MapMaker = {}; function MapMaker.newTooltip(parent)
 	assert(parent ~= nil, "Tooltip requires a parent object.")
 
 	-- Check if mouse is within the bounds of parent object
-	local function CheckParentBounds()
+	local function ParentMouseover()
 		local x, y = love.mouse.getPosition()
 		return  x > this.parent.x
 			and y > this.parent.y
@@ -54,7 +54,7 @@ local MapMaker = {}; function MapMaker.newTooltip(parent)
 
 	-- Add tooltip to view, show when parent is moused over
 	function this.Add()
-		visible = (CheckParentBounds() and this.text ~= nil)
+		visible = (ParentMouseover() and this.text ~= nil)
 		love.graphics.setColor(255, 255, 255, alpha)
 		love.graphics.draw(canvas_tooltip, x, y)
 	end

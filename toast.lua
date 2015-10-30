@@ -72,8 +72,7 @@ local MapMaker = {}; function MapMaker.newToast(text, clickHandler, duration)
 	-- Check for toast mouseover
 	local function Mouseover()
 		local mx, my = love.mouse.getPosition()
-		return visible
-			and mx > x and my > y
+		return  mx > x and my > y
 			and mx < x + width
 			and my < y + height
 	end
@@ -104,6 +103,7 @@ local MapMaker = {}; function MapMaker.newToast(text, clickHandler, duration)
 	-- Dismiss the toast
 	function this.Dismiss()
 		visible = false
+		durationTimer = 0
 	end
 
 	-- If the toast is actively being clicked
@@ -113,29 +113,21 @@ local MapMaker = {}; function MapMaker.newToast(text, clickHandler, duration)
 
 	-- Handle mouse press, show button click feedback
 	function this.mousepressed(clickx, clicky, button)
-		if clickx > x and clickx < x + width 
-			and clicky > y and clicky < y + height 
-				and visible then
-					active = true
-		else
-			active = false
-		end
+		active = Mouseover() and visible
 	end
 
 	-- Handle mouse release, 
 	function this.mousereleased(clickx, clicky, button)
 		active = false
-		if clickx > x and clickx < x + width 
-			and clicky > y and clicky < y + height 
-				and visible then
-					if button == 'r' then
-						this.Dismiss()
-					elseif button == 'l' then
-						if clickHandler ~= nil then
-							(clickHandler)()
-							this.Dismiss() 
-						end
-					end
+		if Mouseover() and visible then
+			if button == 'r' then
+				this.Dismiss()
+			elseif button == 'l' then
+				if clickHandler ~= nil then
+					(clickHandler)()
+					this.Dismiss() 
+				end
+			end
 		end
 	end
 

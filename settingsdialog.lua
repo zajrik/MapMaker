@@ -190,7 +190,8 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 			this.mousereleased(button_confirm.x + 1, button_confirm.y + 1, 'l')
 		elseif key == 'escape' then
 			this.settingsChosen = true
-			for i = 1, #textboxes do textboxes[i].value = textboxes[i].oldValue end
+			for i = 1, #textboxes do
+				textboxes[i].value = textboxes[i].oldValue end
 		end
 
 		for i = 1, #textboxes do

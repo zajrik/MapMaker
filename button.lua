@@ -47,25 +47,24 @@ local MapMaker = {}; function MapMaker.newButton(text, x, y, width, ...)
 		end
 	end
 
+	-- Check for button mouseover
+	local function Mouseover()
+		local x, y = love.mouse.getPosition()
+		return  x > this.x and y > this.y
+			and x < this.x + this.width
+			and y < this.y + this.height
+	end
+
 	-- Handle mouse press, show button click feedback
 	function this.mousepressed(x, y, button)
-		if x > this.x and x < this.x + width 
-			and y > this.y and y < this.y + this.height
-				and this.enabled then
-					this.active = true
-		else
-			this.active = false
-		end
+		this.active = Mouseover() and this.enabled
 	end
 
 	-- Handle mouse release, 
 	function this.mousereleased(x, y, button, clickHandler)
 		this.active = false
-		if x > this.x and x < this.x + width 
-			and y > this.y and y < this.y + this.height
-				and this.enabled then
-					(clickHandler)()
-		end
+		if Mouseover() and this.enabled then 
+			(clickHandler)() end
 	end
 	return this
 end

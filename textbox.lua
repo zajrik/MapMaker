@@ -47,11 +47,18 @@ local MapMaker = {}; function MapMaker.newTextBox(value, x, y, width)
 			'|', font:getWidth(this.value) + this.x + 2, this.y + 1) end
 	end
 
+	-- Check for textbox mouseover
+	local function Mouseover()
+		local x, y = love.mouse.getPosition()
+		return  x > this.x and y > this.y
+			and x < this.x + this.width
+			and y < this.y + this.height
+	end
+
 	-- Handle mouse press
 	function this.mousepressed(x, y, button)
-		if x > this.x and x < this.x + width 
-			and y > this.y and y < this.y + this.height then
-				this.selected = true; timer = 0
+		if Mouseover() then
+			this.selected = true; timer = 0
 		else
 			this.selected = false
 		end
