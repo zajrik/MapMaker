@@ -11,10 +11,16 @@ local MapMaker = {}; function MapMaker.newMapExporter()
 	{
 		validMap = false,
 		errorCode,
-		errorMessages
+		errorMessages,
+		alertClick = false
 	}
 
-	local pathChecker = require 'pathchecker'
+	local pathChecker  = require 'pathchecker'
+	local clickHandler = require 'clickhandler'
+	local toast        = require 'toast'
+	local toast_alert  = toast.init()
+
+	local clickHandler_toast
 
 	this.errorMessages =
 	{
@@ -83,36 +89,47 @@ local MapMaker = {}; function MapMaker.newMapExporter()
 			generatedMap:write(mapBuilder)
 			generatedMap:close()
 
-			-- TODO: Handle map creation result with something less intrusive
-			--       than an alert. Maybe a clickable toast?
-
 			-- Handle map write result
 			if not errorstr then
-				local buttons = {'OK', 'Cancel'}
-				local result = love.window.showMessageBox(
-					'Alert',
-					'Map was created successfully.\nPress OK to navigate to the map file.',
-					buttons
-				)
-				if result == 1 then
-					love.system.openURL(
-						'file://'..love.filesystem.getSaveDirectory()..'/map')
-				end
+				clickHandler_toast =
+					clickHandler.newClickHandler((
+						function()
+							love.system.openURL(
+								'file://'..love.filesystem.getSaveDirectory()..'/map')
+						end
+					))
+				toast_alert = toast.newToast(
+					'Map was created successfully. '..
+					'Click to navigate to the map file.',
+					clickHandler_toast)
+				toast_alert.Show()
 			else
-				local alert = love.window.showMessageBox(
-					'Alert',
-					'There was a problem creating the map file.\nPlease try again.'
-				)
+				toast_alert = toast.newToast(
+					'There was a problem creating the map file. Please try again.')
+				toast_alert.Show()
 			end
 
 		-- Just in case something makes it past the export
 		-- button lockout, display the last error message
 		else
-			local alert = love.window.showMessageBox(
-				'Alert',
-				errorMessages[errorCode]
-			)
+			toast_alert = toast.newToast(
+				errorMessages[errorCode])
 		end
+	end
+
+	-- Pass events for toasts
+	function this.update(dt) toast_alert.update(dt) end
+
+	function this.draw() toast_alert.Add() end
+
+	function this.mousepressed(x, y, button) 
+		toast_alert.mousepressed(x, y, button)
+		if toast_alert.IsActive() then this.alertClick = true end
+	end
+
+	function this.mousereleased(x, y, button)
+		toast_alert.mousereleased(x, y, button)
+		this.alertClick = false
 	end
 
 	return this

@@ -66,6 +66,8 @@ local MapMaker = {}; function MapMaker.newToast(text, clickHandler)
 		return math.max(min, math.min(num, max))
 	end
 	
+	-- TODO: Give toast a duration, passable as parameter with a default value
+
 	-- Update timer
 	function this.update(dt)
 		timer = InRange((visible and timer + dt or timer - dt), 0, maxTimer)

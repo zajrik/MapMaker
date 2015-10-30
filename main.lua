@@ -181,6 +181,7 @@ end
 function love.update(dt)
 	settings.update(dt)
 	tooltip_export.update(dt)
+	exporter.update(dt)
 	debug_update = debug_update + dt
 end
 
@@ -206,6 +207,9 @@ function love.draw()
 	-- Layer settings dialog on top, centered vertically/horizontally on grid
 	if settings.settingsChosen then settingsSet = true end
 	if not settingsSet then settings.Show() end
+
+	-- Allow exporter to draw toasts
+	exporter.draw()
 
 	-- Draw debug info
 	if debug then
@@ -315,8 +319,11 @@ end
 
 -- Mouse pressed event listener
 function love.mousepressed(x, y, button)
+	-- Pass mouse events to exporter for toast alerts
+	exporter.mousepressed(x, y, button)
+
 	-- Handle left click
-	if button == 'l' then
+	if button == 'l' and not exporter.alertClick then
 		-- Pass mouse presses to settings dialog
 		settings.mousepressed(x, y, button)
 		if settingsSet then
@@ -339,7 +346,7 @@ function love.mousepressed(x, y, button)
 	end
 
 	-- Handle right click
-	if button == 'r' then
+	if button == 'r' and not exporter.alertClick then
 		if settingsSet then
 			-- Clicked out of bounds
 			if x > w * cellSize 
@@ -367,7 +374,10 @@ end
 
 -- Mouse released event listener
 function love.mousereleased(x, y, button)
-	if button == 'l' then
+	-- Pass mouse events to exporter for toast alerts
+	exporter.mousereleased(x, y, button)
+
+	if button == 'l' and not exporter.alertClick then
 		if settingsSet then
 			button_export.mousereleased(x, y, button, clickHandler_export)
 			button_settings.mousereleased(x, y, button, clickHandler_settings)
