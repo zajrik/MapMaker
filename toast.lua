@@ -3,13 +3,14 @@
 -- top right of the screen. If a click handler is provided it will be executed
 -- on left click. Right click to dismiss. Toasts are meant to be displayed once
 -- and recycled the next time a toast is needed.
-local MapMaker = {}; function MapMaker.newToast(text, clickHandler)
+local MapMaker = {}; function MapMaker.newToast(text, clickHandler, duration)
 	
 	-- Constructor
 	local this = {}
 
 	local text = text or nil
 	local clickHandler = clickHandler or nil
+	local duration = duration or 5
 	local active = false
 
 	local font_normal = love.graphics.newFont(14)
@@ -25,6 +26,8 @@ local MapMaker = {}; function MapMaker.newToast(text, clickHandler)
 	local maxTimer, timer = .15, 0
 	local alpha = 0
 	local visible = false
+
+	local durationTimer
 
 	-- Error on nil text
 	assert(text ~= nil, 'Toast must have a message.')
@@ -70,6 +73,8 @@ local MapMaker = {}; function MapMaker.newToast(text, clickHandler)
 
 	-- Update timer
 	function this.update(dt)
+		durationTimer = (visible and durationTimer - dt or 0)
+		visible = durationTimer > 0
 		timer = InRange((visible and timer + dt or timer - dt), 0, maxTimer)
 		local percent = timer / maxTimer
 		alpha = 255 * percent
@@ -84,6 +89,7 @@ local MapMaker = {}; function MapMaker.newToast(text, clickHandler)
 	-- Show the toast
 	function this.Show()
 		visible = true and text ~= nil
+		durationTimer = duration
 	end
 
 	-- Dismiss the toast
@@ -115,13 +121,12 @@ local MapMaker = {}; function MapMaker.newToast(text, clickHandler)
 			and clicky > y and clicky < y + height 
 				and visible then
 					if button == 'r' then
-						visible = false
-						print('bar')
+						this.Dismiss()
 					elseif button == 'l' then
 						if clickHandler ~= nil then
 							(clickHandler)()
-							visible = false end
-						print('foo')
+							this.Dismiss() 
+						end
 					end
 		end
 	end

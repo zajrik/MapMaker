@@ -101,7 +101,7 @@ local MapMaker = {}; function MapMaker.newMapExporter()
 				toast_alert = toast.newToast(
 					'Map was created successfully. '..
 					'Click to navigate to the map file.',
-					clickHandler_toast)
+					clickHandler_toast, 5)
 				toast_alert.Show()
 			else
 				toast_alert = toast.newToast(
