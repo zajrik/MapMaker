@@ -47,14 +47,14 @@ local MapMaker = {}; function MapMaker.newToast(text, clickHandler, duration)
 	-- Draw canvas content
 	canvas_toast = love.graphics.newCanvas(width, height)
 	canvas_toast:renderTo(function()
-		-- Draw tooltip box
+		-- Draw toast box
 		love.graphics.setColor(0, 0, 0, 255)
 		love.graphics.rectangle('fill', 0, 0, width, height)
 		love.graphics.setColor(75, 75, 75, 255)
 		love.graphics.rectangle(
 			'fill', 1, 1, width - 2, height - 2)
 
-		-- Draw tooltip text
+		-- Draw toast text
 		love.graphics.setColor(255, 255, 255, 255)
 		love.graphics.printf(
 			text,
