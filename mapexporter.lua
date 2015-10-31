@@ -114,6 +114,7 @@ local MapMaker = {}; function MapMaker.newMapExporter()
 		else
 			toast_alert = toast.newToast(
 				errorMessages[errorCode])
+			toast_alert.Show()
 		end
 	end
 
