@@ -119,6 +119,10 @@ function love.load()
 				settings.TabSelect()
 			end
 		))
+	
+	-- TODO: Move map, active cells, cell marking/associated logic
+	--       and all map building controls to a separate class to
+	--       clean up main. It's gotten pretty cluttered.
 
 	-- Build empty map
 	map = {}
@@ -182,7 +186,8 @@ function love.update(dt)
 	settings.update(dt)
 	tooltip_export.update(dt)
 	exporter.update(dt)
-	debug_update = debug_update + dt
+
+	debug_update = (debug and debug_update + dt or 0)
 end
 
 -- Draw all the things, constantly, forever
@@ -203,6 +208,10 @@ function love.draw()
 
 	-- Add tooltips to view
 	if settingsSet then tooltip_export.Add() end
+
+	-- TODO: Rewrite the way program states (in settings or not)
+	--       are handled to ideally be a little more intuitive
+	--       or at least look a little neater?
 
 	-- Layer settings dialog on top, centered vertically/horizontally on grid
 	if settings.settingsChosen then settingsSet = true end
@@ -275,6 +284,10 @@ function MarkCell(dir, y, x)
 	love.graphics.rectangle(
 		'fill', ToCell(x - 1), ToCell(y - 1), cellSize, cellSize)
 	love.graphics.setColor(0, 0, 0, 255)
+
+	-- TODO: Work out calculations for necessary translation
+	--       for a given rotation value rather than hardcoding
+	--       them
 
 	-- Draw cell markers
 	local y, x, r = y, x, 0

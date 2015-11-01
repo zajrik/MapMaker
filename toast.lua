@@ -96,7 +96,7 @@ local MapMaker = {}; function MapMaker.newToast(text, clickHandler, duration)
 
 	-- Show the toast
 	function this.Show()
-		visible = true and text ~= nil
+		visible = true
 		durationTimer = duration
 	end
 
