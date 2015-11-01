@@ -91,7 +91,7 @@ function love.load()
 
 	-- Bottom buttons
 	button_export = button.newButton(
-		'Export', 0, ToCell(h) + 1, ToCell(w) / 2, {enabled = false})
+		'Export', 0, ToCell(h) + 1, ToCell(w) / 2, false)
 	button_clear = button.newButton(
 		'Clear', (ToCell(w) / 2) + 1, ToCell(h) + 1, (ToCell(w) / 2) - 1)
 	button_settings = button.newButton(
