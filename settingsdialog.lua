@@ -15,6 +15,16 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 		currentW
 	}
 
+	local colors =
+	{
+		white = {255, 255, 255},
+		black = {0,   0,   0  },
+
+		bg_gray = {200, 200, 200},
+
+		overlay = {0, 0, 0, 200},
+	}
+
 	local _text    = require 'textbox'
 	local _button  = require 'button'
 	local _event   = require 'clickhandler'
@@ -123,16 +133,16 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 		local winW = love.window.getWidth()
 
 		-- UI darken overlay
-		love.graphics.setColor(0, 0, 0, 200)
+		love.graphics.setColor(colors.overlay)
 		love.graphics.rectangle('fill', 0, 0, winW, winH)
 
 		-- Draw diaglog box
-		love.graphics.setColor(0, 0, 0, 255)
+		love.graphics.setColor(colors.black)
 		love.graphics.rectangle('fill', this.x, this.y, this.width, this.height)
-		love.graphics.setColor(200, 200, 200, 255)
+		love.graphics.setColor(colors.bg_gray)
 		love.graphics.rectangle(
 			'fill', this.x + 1, this.y + 1, this.width - 2, this.height - 2)
-		love.graphics.setColor(0, 0, 0, 255)
+		love.graphics.setColor(colors.black)
 		love.graphics.print('Height', this.x + 15, this.y + 3)
 		love.graphics.print('Width', this.x + 89, this.y + 3)
 

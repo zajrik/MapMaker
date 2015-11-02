@@ -15,6 +15,17 @@ local iconData = icon:getData()
 love.window.setIcon(iconData)
 love.graphics.setFont(font_regular)
 
+local colors =
+{
+	white  = {255, 255, 255},
+	gray   = {230, 230, 230},
+	black  = {0,   0,   0  },
+	yellow = {223, 229, 123},
+	green  = {0,   255, 0  },
+
+	blank  = {0, 0, 0, 0}
+}
+
 local _settingsDialog = require 'settingsdialog'
 local _button         = require 'button'
 local _event          = require 'clickhandler'
@@ -84,14 +95,11 @@ end
 -- Draw the chosen movement cell marker
 local function MarkCell(dir, y, x)
 	-- Draw cell background
-	if startX == x and startY == y and startSet then
-		love.graphics.setColor(0, 255, 0, 255)
-	else
-		love.graphics.setColor(223, 229, 123, 255)
-	end
+	love.graphics.setColor((startX == x and startY == y and startSet) and
+		colors.blank or colors.yellow)
 	love.graphics.rectangle(
 		'fill', ToCell(x - 1), ToCell(y - 1), cellSize, cellSize)
-	love.graphics.setColor(0, 0, 0, 255)
+	love.graphics.setColor(colors.black)
 
 	-- TODO: Work out calculations for necessary translation
 	--       for a given rotation value rather than hardcoding
@@ -116,7 +124,7 @@ local function UpdateCells()
 		canvas_activeCells:clear()
 		-- Draw chosen start coord cell
 		if startSet then
-			love.graphics.setColor(0, 255, 0, 255)
+			love.graphics.setColor(colors.green)
 			love.graphics.rectangle('fill',
 				ToCell(ToGridCoord(clickX)),
 				ToCell(ToGridCoord(clickY)),
@@ -226,10 +234,10 @@ function love.load()
 			for x = 1, w do
 				if y % 2 ~= 0 then
 					love.graphics.setColor(x % 2 == 0 and
-						{230, 230, 230, 255} or {255, 255, 255, 255})
+						colors.gray or colors.white)
 				else
 					love.graphics.setColor(x % 2 ~= 0 and
-						{230, 230, 230, 255} or {255, 255, 255, 255})
+						colors.gray or colors.white)
 				end
 				love.graphics.rectangle(
 					'fill', nextX , nextY, cellSize, cellSize)
@@ -246,14 +254,14 @@ function love.load()
 	canvas_arrow = love.graphics.newCanvas(cellSize, cellSize)
 	canvas_arrow:renderTo(function()
 		love.graphics.setLineWidth(2)
-		love.graphics.setColor(0, 0, 0, 255)
+		love.graphics.setColor(colors.black)
 		love.graphics.line(8,16,  15,8,  22,16)
 		love.graphics.line(15,10,  15,22)
 	end)
 	canvas_star = love.graphics.newCanvas(cellSize, cellSize)
 	canvas_star:renderTo(function()
 		love.graphics.setLineWidth(2)
-		love.graphics.setColor(0, 0, 0, 255)
+		love.graphics.setColor(colors.black)
 		love.graphics.line(9,11,  21,19)
 		love.graphics.line(9,19,  21,11)
 		love.graphics.line(15,8,  15,22)
@@ -274,11 +282,11 @@ end
 function love.draw()
 
 	-- Draw background grid canvas
-	love.graphics.setColor(255, 255, 255, 255)
+	love.graphics.setColor(colors.white)
 	love.graphics.draw(canvas_grid, 0, 0)
 
 	-- Draw active direction cells canvas
-	love.graphics.setColor(255, 255, 255, 255)
+	love.graphics.setColor(colors.white)
 	love.graphics.draw(canvas_activeCells, 0, 0)
 
 	-- Draw bottom buttons
@@ -307,7 +315,7 @@ function love.draw()
 		local mouseX, mouseY = love.mouse.getPosition()
 		mouseX = InRange(ToMapCoord(mouseX), 1, w)
 		mouseY = InRange(ToMapCoord(mouseY), 1, h)
-		love.graphics.setColor(0, 0, 0, 255)
+		love.graphics.setColor(colors.black)
 		love.graphics.print(mouseY..','..mouseX, 2, ToCell(h) - 14)
 
 		-- Draw memory usage, fps

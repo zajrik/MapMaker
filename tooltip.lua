@@ -17,6 +17,16 @@ local MapMaker = {}; function MapMaker.newTooltip(parent)
 	local font_normal = love.graphics.newFont(14)
 	local font_medium = love.graphics.newFont(11)
 
+	local colors =
+	{
+		white = {255, 255, 255},
+		black = {0,   0,   0  },
+
+		bg_gray = {75, 75, 75},
+
+		alpha = {255, 255, 255, 0}
+	}
+
 	local canvas_tooltip = love.graphics.newCanvas(2, 2)
 
 	local maxWidth = 200
@@ -25,7 +35,6 @@ local MapMaker = {}; function MapMaker.newTooltip(parent)
 	local height
 
 	local maxTimer, timer = .075, 0
-	local alpha = 0
 	local visible = false
 
 	-- Error if missing parent
@@ -49,13 +58,13 @@ local MapMaker = {}; function MapMaker.newTooltip(parent)
 	function this.update(dt)
 		timer = InRange((visible and timer + dt or timer - dt), 0, maxTimer)
 		local percent = timer / maxTimer
-		alpha = 255 * percent
+		colors.alpha[4] = 255 * percent
 	end
 
 	-- Add tooltip to view, show when parent is moused over
 	function this.Add()
 		visible = (ParentMouseover() and this.text ~= nil)
-		love.graphics.setColor(255, 255, 255, alpha)
+		love.graphics.setColor(colors.alpha)
 		love.graphics.draw(canvas_tooltip, x, y)
 	end
 
@@ -94,14 +103,14 @@ local MapMaker = {}; function MapMaker.newTooltip(parent)
 		canvas_tooltip = love.graphics.newCanvas(width, height)
 		canvas_tooltip:renderTo(function()
 			-- Draw tooltip box
-			love.graphics.setColor(0, 0, 0, 255)
+			love.graphics.setColor(colors.black)
 			love.graphics.rectangle('fill', 0, 0, width, height)
-			love.graphics.setColor(75, 75, 75, 255)
+			love.graphics.setColor(colors.bg_gray)
 			love.graphics.rectangle(
 				'fill', 1, 1, width - 2, height - 2)
 
 			-- Draw tooltip text
-			love.graphics.setColor(255, 255, 255, 255)
+			love.graphics.setColor(colors.white)
 			love.graphics.printf(
 				this.text,
 				4, 4, maxWidth, 'left')

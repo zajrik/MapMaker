@@ -19,6 +19,14 @@ local MapMaker = {}; function MapMaker.newTextBox(value, x, y, width)
 	local font = love.graphics.newFont(14)
 	local timer = 0
 
+	local colors =
+	{
+		white = {255, 255, 255},
+		black = {0,   0,   0  },
+
+		border = {150, 150, 150},
+	}
+
 	-- Update timer
 	function this.update(dt)
 		timer = timer + dt
@@ -28,18 +36,18 @@ local MapMaker = {}; function MapMaker.newTextBox(value, x, y, width)
 	-- Handle display of the text box
 	function this.Show()
 		-- Draw border rectangle
-		if this.selected then love.graphics.setColor(0, 0, 0, 255)
-		else love.graphics.setColor(150, 150, 150, 255) end
+		love.graphics.setColor(this.selected and
+			colors.black or colors.border)
 		love.graphics.rectangle(
 			'fill', this.x, this.y, this.width, this.height)
 
 		-- Draw bg rectangle
-		love.graphics.setColor(255, 255, 255, 255)
+		love.graphics.setColor(colors.white)
 		love.graphics.rectangle(
 			'fill', this.x + 1, this.y + 1, this.width - 2, this.height - 2)
 
 		-- Draw textbox text
-		love.graphics.setColor(0, 0, 0, 255)
+		love.graphics.setColor(colors.black)
 		love.graphics.print(this.value, this.x + 3, this.y + 2)
 
 		-- Draw text cursor

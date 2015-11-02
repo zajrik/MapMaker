@@ -16,6 +16,16 @@ local MapMaker = {}; function MapMaker.newToast(text, clickHandler, duration)
 	local font_normal = love.graphics.newFont(14)
 	local font_medium = love.graphics.newFont(11)
 
+	local colors =
+	{
+		white = {255, 255, 255},
+		black = {0,   0,   0  },
+
+		bg_gray = {75, 75, 75},
+
+		alpha = {255, 255, 255, 0}
+	}
+
 	local canvas_toast
 
 	local maxWidth = 200
@@ -23,11 +33,9 @@ local MapMaker = {}; function MapMaker.newToast(text, clickHandler, duration)
 	local width, lines
 	local height
 
-	local maxTimer, timer = .15, 0
-	local alpha = 0
-	local visible = false
-
 	local durationTimer
+	local maxTimer, timer = .15, 0
+	local visible = false
 
 	-- Error on nil text
 	assert(text ~= nil, 'Toast must have a message.')
@@ -48,14 +56,14 @@ local MapMaker = {}; function MapMaker.newToast(text, clickHandler, duration)
 	canvas_toast = love.graphics.newCanvas(width, height)
 	canvas_toast:renderTo(function()
 		-- Draw toast box
-		love.graphics.setColor(0, 0, 0, 255)
+		love.graphics.setColor(colors.black)
 		love.graphics.rectangle('fill', 0, 0, width, height)
-		love.graphics.setColor(75, 75, 75, 255)
+		love.graphics.setColor(colors.bg_gray)
 		love.graphics.rectangle(
 			'fill', 1, 1, width - 2, height - 2)
 
 		-- Draw toast text
-		love.graphics.setColor(255, 255, 255, 255)
+		love.graphics.setColor(colors.white)
 		love.graphics.printf(
 			text,
 			4, 4, maxWidth, 'left')
@@ -85,12 +93,12 @@ local MapMaker = {}; function MapMaker.newToast(text, clickHandler, duration)
 
 		timer = InRange((visible and timer + dt or timer - dt), 0, maxTimer)
 		local percent = timer / maxTimer
-		alpha = 255 * percent
+		colors.alpha[4] = 255 * percent
 	end
 
 	-- Add the toast to view. Will be displayed when Show() is called.
 	function this.Add()
-		love.graphics.setColor(255, 255, 255, alpha)
+		love.graphics.setColor(colors.alpha)
 		love.graphics.draw(canvas_toast, x, y)
 	end
 
