@@ -10,10 +10,11 @@ FILES=\
 	tooltip.lua\
 	toast.lua\
 	clickhandler.lua\
+	mapbuilder.lua\
 	pathchecker.lua\
 	mapexporter.lua\
 	icon.png\
-	
+
 BUILD_DIR=/home/$(USER)/LoveReleases
 
 all:
