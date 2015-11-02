@@ -6,22 +6,21 @@ local debug_update = 0
 local debug_mem = 0
 local debug_fps = 0
 
-font_regular = love.graphics.newFont(14)
-font_small   = love.graphics.newFont(10)
+local font_regular = love.graphics.newFont(14)
+local font_small   = love.graphics.newFont(10)
 
-icon = love.graphics.newImage('icon.png')
-iconData = icon:getData()
+local icon = love.graphics.newImage('icon.png')
+local iconData = icon:getData()
 
 love.window.setIcon(iconData)
 love.graphics.setFont(font_regular)
 
-local settingsDialog = require 'settingsdialog'
-local button         = require 'button'
-local event          = require 'clickhandler'
-local tooltip        = require 'tooltip'
+local _settingsDialog = require 'settingsdialog'
+local _button         = require 'button'
+local _event          = require 'clickhandler'
+local _tooltip        = require 'tooltip'
 
-local pathChecker = require 'pathchecker'
-local mapExporter = require 'mapexporter'
+local _mapExporter = require 'mapexporter'
 
 local winX, winY, display
 
@@ -52,10 +51,92 @@ local finishY, finishX, finishSet
 local clickY, clickX
 local rclickY, rclickX
 
-local exportClick
-
 local map
 local exporter
+
+-- Make number fit a map coord (1-index)
+local function ToMapCoord(number)
+	return math.floor((number / cellSize) + 1)
+end
+
+-- Make number fit a grid coord (0-index)
+local function ToGridCoord(number)
+	return math.floor((number / cellSize))
+end
+
+-- Make a coord fit a cell
+local function ToCell(number)
+	return number * cellSize
+end
+
+-- Ensure a number stays inside min/max boundaries
+local function InRange(num, min, max)
+	return math.max(min, math.min(num, max))
+end
+
+-- Check if direction cell overwrites finish cell, overwrite it if so
+-- Parameters must be map coordinates
+local function CheckCell(y, x)
+	if y == finishY and x == finishX then
+		finishSet = false; finishY = 0; finishX = 0 end
+end
+
+-- Draw the chosen movement cell marker
+local function MarkCell(dir, y, x)
+	-- Draw cell background
+	if startX == x and startY == y and startSet then
+		love.graphics.setColor(0, 255, 0, 255)
+	else
+		love.graphics.setColor(223, 229, 123, 255)
+	end
+	love.graphics.rectangle(
+		'fill', ToCell(x - 1), ToCell(y - 1), cellSize, cellSize)
+	love.graphics.setColor(0, 0, 0, 255)
+
+	-- TODO: Work out calculations for necessary translation
+	--       for a given rotation value rather than hardcoding
+	--       them
+
+	-- Draw cell markers
+	local cy, cx, r = y, x, 0
+	if     dir == '^' then cy, cx, r = y-1, x-1, 0
+	elseif dir == '>' then cy, cx, r = y-1, x,   90
+	elseif dir == 'v' then cy, cx, r = y,   x,   180
+	elseif dir == '<' then cy, cx, r = y,   x-1, 270
+	elseif dir == '*' then love.graphics.draw(
+		canvas_star, ToCell(cx - 1), ToCell(cy - 1)) end
+	if dir ~= '*' then love.graphics.draw(
+		canvas_arrow, ToCell(cx), ToCell(cy), math.rad(r)) end
+end
+
+-- Update the activeCells canvas and run the live map checker
+local function UpdateCells()
+
+	canvas_activeCells:renderTo(function()
+		canvas_activeCells:clear()
+		-- Draw chosen start coord cell
+		if startSet then
+			love.graphics.setColor(0, 255, 0, 255)
+			love.graphics.rectangle('fill',
+				ToCell(ToGridCoord(clickX)),
+				ToCell(ToGridCoord(clickY)),
+				cellSize, cellSize)
+		end
+
+		-- Draw movement marker cells
+		for y = 1, #map do
+			for x = 1, #map[y] do
+				if map[y][x] ~= '.' then MarkCell(map[y][x], y, x) end
+			end
+		end
+	end)
+
+	exporter.LiveChecker(map, h, w, startY, startX, startSet, finishSet)
+	button_export.enabled = exporter.validMap
+	tooltip_export.SetText(
+		(exporter.validMap and nil or exporter.errorMessages[exporter.errorCode]))
+
+end
 
 function love.load()
 	settingsSet = true
@@ -74,9 +155,7 @@ function love.load()
 	rclickY = 0
 	rclickX = 0
 
-	exportClick = false
-
-	settings = settingsDialog.newSettingsDialog()
+	settings = _settingsDialog.newSettingsDialog()
 
 	-- Get height, width from settings file
 	h, w = settings.Read()
@@ -90,36 +169,36 @@ function love.load()
 		{display = display, x = winX, y = winY})
 
 	-- Bottom buttons
-	button_export = button.newButton(
+	button_export = _button.newButton(
 		'Export', 0, ToCell(h) + 1, ToCell(w) / 2, false)
-	button_clear = button.newButton(
+	button_clear = _button.newButton(
 		'Clear', (ToCell(w) / 2) + 1, ToCell(h) + 1, (ToCell(w) / 2) - 1)
-	button_settings = button.newButton(
+	button_settings = _button.newButton(
 		'Settings', 0, ToCell(h) + 27, ToCell(w))
 
 	-- Button click handlers
-	clickHandler_export = 
-		event.newClickHandler((
+	clickHandler_export =
+		_event.newClickHandler((
 			function()
 				exporter.ExportMap(
 					map, h, w, startY, startX, startSet, finishSet)
 			end
 		))
-	clickHandler_clear = 
-		event.newClickHandler((
+	clickHandler_clear =
+		_event.newClickHandler((
 			function()
 				love.load()
 			end
 		))
-	clickHandler_settings = 
-		event.newClickHandler((
+	clickHandler_settings =
+		_event.newClickHandler((
 			function()
 				settings.settingsChosen = false
 				settingsSet = false
 				settings.TabSelect()
 			end
 		))
-	
+
 	-- TODO: Move map, active cells, cell marking/associated logic
 	--       and all map building controls to a separate class to
 	--       clean up main. It's gotten pretty cluttered.
@@ -134,10 +213,10 @@ function love.load()
 	end
 
 	-- Initialize map exporter
-	exporter = mapExporter.newMapExporter()
+	exporter = _mapExporter.newMapExporter()
 
 	-- Initialize tooltips
-	tooltip_export = tooltip.newTooltip(button_export)
+	tooltip_export = _tooltip.newTooltip(button_export)
 
 	-- Prepare background grid canvas and draw background grid to it
 	canvas_grid = love.graphics.newCanvas(ToCell(w), ToCell(h))
@@ -229,7 +308,7 @@ function love.draw()
 		mouseY = InRange(ToMapCoord(mouseY), 1, h)
 		love.graphics.setColor(0, 0, 0, 255)
 		love.graphics.print(mouseY..','..mouseX, 2, ToCell(h) - 14)
-		
+
 		-- Draw memory usage, fps
 		love.graphics.print(
 			'Lua Memory Usage: '..string.format('%d',debug_mem)..' KB', 5, 3)
@@ -243,90 +322,6 @@ function love.draw()
 			debug_update = 0
 		end
 	end
-
-end
-
--- Make number fit a map coord (1-index)
-function ToMapCoord(number)
-	return math.floor((number / cellSize) + 1)
-end
-
--- Make number fit a grid coord (0-index)
-function ToGridCoord(number)
-	return math.floor((number / cellSize))
-end
-
--- Make a coord fit a cell
-function ToCell(number)
-	return number * cellSize
-end
-
--- Ensure a number stays inside min/max boundaries
-function InRange(num, min, max)
-	return math.max(min, math.min(num, max))
-end
-
--- Check if direction cell overwrites finish cell, overwrite it if so
--- Parameters must be map coordinates
-function CheckCell(y, x)
-	if y == finishY and x == finishX then
-		finishSet = false; finishY = 0; finishX = 0 end
-end
-
--- Draw the chosen movement cell marker
-function MarkCell(dir, y, x)
-	-- Draw cell background
-	if startX == x and startY == y and startSet then 
-		love.graphics.setColor(0, 255, 0, 255)
-	else
-		love.graphics.setColor(223, 229, 123, 255)
-	end
-	love.graphics.rectangle(
-		'fill', ToCell(x - 1), ToCell(y - 1), cellSize, cellSize)
-	love.graphics.setColor(0, 0, 0, 255)
-
-	-- TODO: Work out calculations for necessary translation
-	--       for a given rotation value rather than hardcoding
-	--       them
-
-	-- Draw cell markers
-	local y, x, r = y, x, 0
-	if     dir == '^' then y, x, r = y-1, x-1, 0
-	elseif dir == '>' then y, x, r = y-1, x,   90
-	elseif dir == 'v' then y, x, r = y,   x,   180
-	elseif dir == '<' then y, x, r = y,   x-1, 270
-	elseif dir == '*' then love.graphics.draw(
-		canvas_star, ToCell(x - 1), ToCell(y - 1)) end
-	if dir ~= '*' then love.graphics.draw(
-		canvas_arrow, ToCell(x), ToCell(y), math.rad(r)) end
-end
-
--- Update the activeCells canvas and run the live map checker
-function UpdateCells()
-
-	canvas_activeCells:renderTo(function()
-		canvas_activeCells:clear()
-		-- Draw chosen start coord cell
-		if startSet then
-			love.graphics.setColor(0, 255, 0, 255)
-			love.graphics.rectangle('fill', 
-				ToCell(ToGridCoord(clickX)),
-				ToCell(ToGridCoord(clickY)),
-				cellSize, cellSize)
-		end
-
-		-- Draw movement marker cells
-		for y = 1, #map do
-			for x = 1, #map[y] do
-				if map[y][x] ~= '.' then MarkCell(map[y][x], y, x) end
-			end
-		end
-	end)
-
-	exporter.LiveChecker(map, h, w, startY, startX, startSet, finishSet)
-	button_export.enabled = exporter.validMap
-	tooltip_export.SetText(
-		(exporter.validMap and nil or exporter.errorMessages[exporter.errorCode]))
 
 end
 
@@ -350,7 +345,7 @@ function love.mousepressed(x, y, button)
 				or y > (h * cellSize) - 1 then
 
 			-- Clicked grid
-			else clickX = x; clickY = y 
+			else clickX = x; clickY = y
 				startX = ToMapCoord(clickX)
 				startY = ToMapCoord(clickY)
 				startSet = true; UpdateCells()
@@ -362,7 +357,7 @@ function love.mousepressed(x, y, button)
 	if button == 'r' and not exporter.alertClick then
 		if settingsSet then
 			-- Clicked out of bounds
-			if x > w * cellSize 
+			if x > w * cellSize
 				or y > (h * cellSize) - 1 then
 
 			-- Clicked grid
@@ -414,7 +409,7 @@ function love.keypressed(key)
 
 		if ToMapCoord(y) > h then validPos = false
 		else y = ToMapCoord(y) end
-		
+
 		if validPos then
 			if     key == 'w' then map[y][x] = '^'; CheckCell(y, x)
 			elseif key == 'd' then map[y][x] = '>'; CheckCell(y, x)
@@ -436,7 +431,7 @@ function love.keypressed(key)
 			UpdateCells()
 		end
 
-		if love.keyboard.isDown('lctrl') and key == 'g' then 
+		if love.keyboard.isDown('lctrl') and key == 'g' then
 			debug = not debug end
 	end
 

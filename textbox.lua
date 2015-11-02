@@ -1,9 +1,9 @@
 -- @namespace MapMaker
 -- @class TextBox: A simple textbox implementation
 local MapMaker = {}; function MapMaker.newTextBox(value, x, y, width)
-	
+
 	-- Constructor
-	local this = 
+	local this =
 	{
 		value    = value,
 		x        = x,
@@ -28,11 +28,11 @@ local MapMaker = {}; function MapMaker.newTextBox(value, x, y, width)
 	-- Handle display of the text box
 	function this.Show()
 		-- Draw border rectangle
-		if this.selected then love.graphics.setColor(0, 0, 0, 255) 
+		if this.selected then love.graphics.setColor(0, 0, 0, 255)
 		else love.graphics.setColor(150, 150, 150, 255) end
 		love.graphics.rectangle(
 			'fill', this.x, this.y, this.width, this.height)
-		
+
 		-- Draw bg rectangle
 		love.graphics.setColor(255, 255, 255, 255)
 		love.graphics.rectangle(
@@ -49,14 +49,14 @@ local MapMaker = {}; function MapMaker.newTextBox(value, x, y, width)
 
 	-- Check for textbox mouseover
 	local function Mouseover()
-		local x, y = love.mouse.getPosition()
-		return  x > this.x and y > this.y
-			and x < this.x + this.width
-			and y < this.y + this.height
+		local mx, my = love.mouse.getPosition()
+		return  mx > this.x and my > this.y
+			and mx < this.x + this.width
+			and my < this.y + this.height
 	end
 
 	-- Handle mouse press
-	function this.mousepressed(x, y, button)
+	function this.mousepressed(clickx, clicky, button)
 		if Mouseover() then
 			this.selected = true; timer = 0
 		else

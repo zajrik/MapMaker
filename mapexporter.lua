@@ -1,13 +1,13 @@
 -- @namespace MapMaker
--- @class MapExporter: 
+-- @class MapExporter:
 -- Export the drawn map to .map file. MapExporter handles the primary
 -- logic behind making sure a map contains the essentials to be read
 -- by the robot, whereas PathChecker will verify that the actual path
 -- itself is able to be followed by the robot.
 local MapMaker = {}; function MapMaker.newMapExporter()
-	
+
 	-- Constructor
-	local this = 
+	local this =
 	{
 		validMap = false,
 		errorCode,
@@ -15,10 +15,10 @@ local MapMaker = {}; function MapMaker.newMapExporter()
 		alertClick = false
 	}
 
-	local pathChecker  = require 'pathchecker'
-	local clickHandler = require 'clickhandler'
-	local toast        = require 'toast'
-	local toast_alert  = toast.init()
+	local _pathChecker  = require 'pathchecker'
+	local _clickHandler = require 'clickhandler'
+	local _toast        = require 'toast'
+	local toast_alert  = _toast.init()
 
 	local clickHandler_toast
 
@@ -37,7 +37,7 @@ local MapMaker = {}; function MapMaker.newMapExporter()
 	-- To be called every time a change to the map is made.
 	function this.LiveChecker(map, h, w, startY, startX, startSet, finishSet)
 		if startSet and finishSet and map[startY][startX] ~= '.' then
-			local check = pathChecker.newPathChecker(h, w, startY, startX)
+			local check = _pathChecker.newPathChecker(h, w, startY, startX)
 			if check.CheckPath(map) then
 				this.validMap = true; this.errorCode = 0
 			else this.errorCode = 1 end
@@ -83,7 +83,7 @@ local MapMaker = {}; function MapMaker.newMapExporter()
 			-- TODO: Timestamp in generated map file name?
 
 			-- Write map string to file
-			local generatedMap, errorstr = 
+			local generatedMap, errorstr =
 				love.filesystem.newFile('/map/generatedMap.map')
 			generatedMap:open('w')
 			generatedMap:write(mapBuilder)
@@ -92,19 +92,19 @@ local MapMaker = {}; function MapMaker.newMapExporter()
 			-- Handle map write result
 			if not errorstr then
 				clickHandler_toast =
-					clickHandler.newClickHandler((
+					_clickHandler.newClickHandler((
 						function()
 							love.system.openURL(
 								'file://'..love.filesystem.getSaveDirectory()..'/map')
 						end
 					))
-				toast_alert = toast.newToast(
+				toast_alert = _toast.newToast(
 					'Map was created successfully. '..
 					'Click to navigate to the map file.',
 					clickHandler_toast, 5)
 				toast_alert.Show()
 			else
-				toast_alert = toast.newToast(
+				toast_alert = _toast.newToast(
 					'There was a problem creating the map file. Please try again.')
 				toast_alert.Show()
 			end
@@ -112,8 +112,8 @@ local MapMaker = {}; function MapMaker.newMapExporter()
 		-- Just in case something makes it past the export
 		-- button lockout, display the last error message
 		else
-			toast_alert = toast.newToast(
-				errorMessages[errorCode])
+			toast_alert = _toast.newToast(
+				this.errorMessages[this.errorCode])
 			toast_alert.Show()
 		end
 	end
@@ -123,7 +123,7 @@ local MapMaker = {}; function MapMaker.newMapExporter()
 
 	function this.draw() toast_alert.Add() end
 
-	function this.mousepressed(x, y, button) 
+	function this.mousepressed(x, y, button)
 		toast_alert.mousepressed(x, y, button)
 		if toast_alert.IsActive() then this.alertClick = true end
 	end

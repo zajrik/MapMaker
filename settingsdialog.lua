@@ -1,23 +1,24 @@
 -- @namespace MapMaker
 -- @class SettingsDialog: Create a dialog window for setting grid height/width
 local MapMaker = {}; function MapMaker.newSettingsDialog()
-	
+
 	-- Constructor
-	local this = 
+	local this =
 	{
 		width = 150,
 		height = 76,
 		x = 0,
 		y = 0,
+
 		settingsChosen,
 		currentH,
 		currentW
 	}
 
-	local text   = require 'textbox'
-	local button = require 'button'
-	local event  = require 'clickhandler'
-	local tooltip = require 'tooltip'
+	local _text   = require 'textbox'
+	local _button = require 'button'
+	local _event  = require 'clickhandler'
+	local _tooltip = require 'tooltip'
 
 	local textbox_height
 	local textbox_width
@@ -33,21 +34,21 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 		if not love.filesystem.exists('MapMakerSettings.lua') then
 			this.Write(8, 8)
 			return 8, 8
-			
+
 		-- Read settings file
 		else
 			local settingsLoader = love.filesystem.load('MapMakerSettings.lua')
 			local settings = (settingsLoader)()
 			return settings.height, settings.width
 		end
-		
+
 	end
 
 	-- Write to settings file
 	function this.Write(h, w)
 		local settingsString = string.format(
 			'return \n{\n\theight = %d,\n\twidth = %d\n}', h, w)
-		local settingsFile, errorstr = love.filesystem.newFile('MapMakerSettings.lua')
+		local settingsFile, _ = love.filesystem.newFile('MapMakerSettings.lua')
 		settingsFile:open('w')
 		settingsFile:write(settingsString)
 		settingsFile:close()
@@ -61,22 +62,22 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 	this.x = math.floor(((this.x / 2) * 30) - (this.width / 2))
 
 	-- Initialize dialog components
-	textbox_height = text.newTextBox(valueY, this.x + 5, this.y + 20, 67)
-	textbox_width  = text.newTextBox(valueX, this.x + this.width - 72, this.y + 20, 67)
-	
-	button_confirm = button.newButton(
+	textbox_height = _text.newTextBox(valueY, this.x + 5, this.y + 20, 67)
+	textbox_width  = _text.newTextBox(valueX, this.x + this.width - 72, this.y + 20, 67)
+
+	button_confirm = _button.newButton(
 		'OK', this.x + 10, this.y + this.height - 30, this.width - 20)
 
-	tooltip_confirm = tooltip.newTooltip(button_confirm)
+	tooltip_confirm = _tooltip.newTooltip(button_confirm)
 
-	clickHandler_confirm = 
-		event.newClickHandler((
+	clickHandler_confirm =
+		_event.newClickHandler((
 			function()
 				this.settingsChosen = true
 				this.Write(textbox_height.value, textbox_width.value)
 
 				-- Don't clear the grid if values weren't changed
-				if tonumber(textbox_height.value) == this.currentH 
+				if tonumber(textbox_height.value) == this.currentH
 					and tonumber(textbox_width.value) == this.currentW then
 
 				else love.load() end
@@ -97,7 +98,7 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 		tooltip_confirm.SetText((not button_confirm.enabled) and
 			'Grid height and width must not be empty.' or nil)
 		if not button_confirm.enabled then return end
-	
+
 		-- Enforce min/max values
 		button_confirm.enabled = (tonumber(textbox_height.value) >= 8
 			and tonumber(textbox_height.value) <= 25
@@ -159,7 +160,7 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 				textboxes[i].selected = false
 			end
 			textboxes[select].selected = true
-		end 
+		end
 	end
 
 	-- Handle mouse press

@@ -1,12 +1,12 @@
 -- @namespace MapMaker
--- @class PathChecker: 
+-- @class PathChecker:
 -- Check map for valid path. If there are any problems with the map prior
--- to parsing that primary logic misses, PathChecker will catch it. 
+-- to parsing that primary logic misses, PathChecker will catch it.
 -- Nothing gets past PathChecker. (At least not in testing.)
 local MapMaker = {}; function MapMaker.newPathChecker(mapHeight, mapWidth, startY, startX)
-	
+
 	-- Constructor
-	local this = 
+	local this =
 	{
 		mapHeight = mapHeight,
 		mapWidth = mapWidth,
@@ -15,7 +15,7 @@ local MapMaker = {}; function MapMaker.newPathChecker(mapHeight, mapWidth, start
 	}
 
 	-- Direction enum
-	local Direction = 
+	local Direction =
 	{
 		NORTH = 1,
 		EAST  = 2,
@@ -67,7 +67,7 @@ local MapMaker = {}; function MapMaker.newPathChecker(mapHeight, mapWidth, start
 					return false
 				else foundEnd = true end
 			elseif map[y][x] == '.' then return false
-			else end
+			end
 
 			counter = counter + 1
 		until foundEnd

@@ -6,9 +6,9 @@
 -- which case it will be moved to the lower left-hand corner of the grid.
 -- The tooltip text can be changed via the SetText() method.
 local MapMaker = {}; function MapMaker.newTooltip(parent)
-	
+
 	-- Constructor
-	local this = 
+	local this =
 	{
 		parent = parent or nil,
 		text = nil
@@ -33,18 +33,18 @@ local MapMaker = {}; function MapMaker.newTooltip(parent)
 
 	-- Check if mouse is within the bounds of parent object
 	local function ParentMouseover()
-		local x, y = love.mouse.getPosition()
-		return  x > this.parent.x
-			and y > this.parent.y
-			and x < this.parent.x + this.parent.width
-			and y < this.parent.y + this.parent.height
+		local mx, my = love.mouse.getPosition()
+		return  mx > this.parent.x
+			and my > this.parent.y
+			and mx < this.parent.x + this.parent.width
+			and my < this.parent.y + this.parent.height
 	end
 
 	-- Ensure a number stays inside min/max boundaries
 	local function InRange(num, min, max)
 		return math.max(min, math.min(num, max))
 	end
-	
+
 	-- Update timer
 	function this.update(dt)
 		timer = InRange((visible and timer + dt or timer - dt), 0, maxTimer)
@@ -78,7 +78,7 @@ local MapMaker = {}; function MapMaker.newTooltip(parent)
 		y = this.parent.y - (height + 5)
 
 		-- Enforce drawing within window bounds
-		winW, winH = love.window.getDimensions()
+		local winW, winH = love.window.getDimensions()
 		x = InRange(x, 5, (winW - width) - 5)
 		y = InRange(y, 5, (winH - height) - 57)
 

@@ -4,7 +4,7 @@
 -- on left click. Right click to dismiss. Toasts are meant to be displayed once
 -- and recycled the next time a toast is needed.
 local MapMaker = {}; function MapMaker.newToast(text, clickHandler, duration)
-	
+
 	-- Constructor
 	local this = {}
 
@@ -40,7 +40,7 @@ local MapMaker = {}; function MapMaker.newToast(text, clickHandler, duration)
 	width = width + 6
 	height = (height * lines) + 8
 
-	winW, winH = love.window.getDimensions()
+	local winW, _ = love.window.getDimensions()
 	x = winW - width - 5
 	y = 5
 
@@ -79,7 +79,7 @@ local MapMaker = {}; function MapMaker.newToast(text, clickHandler, duration)
 
 	-- Update timer
 	function this.update(dt)
-		durationTimer = ((visible and not Mouseover()) 
+		durationTimer = ((visible and not Mouseover())
 			and durationTimer - dt or durationTimer)
 		visible = durationTimer > 0
 
@@ -116,7 +116,7 @@ local MapMaker = {}; function MapMaker.newToast(text, clickHandler, duration)
 		active = Mouseover() and visible
 	end
 
-	-- Handle mouse release, 
+	-- Handle mouse release,
 	function this.mousereleased(clickx, clicky, button)
 		active = false
 		if Mouseover() and visible then
@@ -125,7 +125,7 @@ local MapMaker = {}; function MapMaker.newToast(text, clickHandler, duration)
 			elseif button == 'l' then
 				if clickHandler ~= nil then
 					(clickHandler)()
-					this.Dismiss() 
+					this.Dismiss()
 				end
 			end
 		end
@@ -134,10 +134,10 @@ local MapMaker = {}; function MapMaker.newToast(text, clickHandler, duration)
 	return this
 end
 
--- Return an empty class containing blank methods with init(). This allows the recyclable
--- toast object to be initialized so that it can be added to love.draw/update/etc without
--- causing crashes, effectively serving as a placeholder until the object is declared
--- with newToast()
+-- Return an empty class containing blank methods with init(). This allows then
+-- recyclable toast object to be initialized so that it can be added to
+-- love.draw/update/etc without causing crashes, effectively serving as a
+-- placeholder until the object is instantiated with newToast()
 function MapMaker.Add() end
 function MapMaker.IsActive() end
 function MapMaker.Show() end
