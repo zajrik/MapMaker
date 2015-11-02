@@ -134,7 +134,7 @@ local function UpdateCells()
 	exporter.LiveChecker(map, h, w, startY, startX, startSet, finishSet)
 	button_export.enabled = exporter.validMap
 	tooltip_export.SetText(
-		(exporter.validMap and nil or exporter.errorMessages[exporter.errorCode]))
+		exporter.validMap and nil or exporter.errorMessages[exporter.errorCode])
 
 end
 
@@ -225,13 +225,14 @@ function love.load()
 		for y = 1, h do
 			for x = 1, w do
 				if y % 2 ~= 0 then
-					if x % 2 == 0 then love.graphics.setColor(230, 230, 230, 255)
-					else love.graphics.setColor(255, 255, 255, 255) end
+					love.graphics.setColor(x % 2 == 0 and
+						{230, 230, 230, 255} or {255, 255, 255, 255})
 				else
-					if x % 2 ~= 0 then love.graphics.setColor(230, 230, 230, 255)
-					else love.graphics.setColor(255, 255, 255, 255) end
+					love.graphics.setColor(x % 2 ~= 0 and
+						{230, 230, 230, 255} or {255, 255, 255, 255})
 				end
-				love.graphics.rectangle('fill', nextX , nextY, cellSize, cellSize)
+				love.graphics.rectangle(
+					'fill', nextX , nextY, cellSize, cellSize)
 				nextX = nextX + cellSize
 			end
 			nextX, nextY = 0, (nextY + cellSize)
@@ -266,7 +267,7 @@ function love.update(dt)
 	tooltip_export.update(dt)
 	exporter.update(dt)
 
-	debug_update = (debug and debug_update + dt or 0)
+	debug_update = (debug and debug_update + dt or 1)
 end
 
 -- Draw all the things, constantly, forever

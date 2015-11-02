@@ -57,11 +57,8 @@ local MapMaker = {}; function MapMaker.newTextBox(value, x, y, width)
 
 	-- Handle mouse press
 	function this.mousepressed(clickx, clicky, button)
-		if Mouseover() then
-			this.selected = true; timer = 0
-		else
-			this.selected = false
-		end
+		this.selected = Mouseover()
+		timer = 0
 	end
 
 	-- Handle text input

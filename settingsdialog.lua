@@ -15,9 +15,9 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 		currentW
 	}
 
-	local _text   = require 'textbox'
-	local _button = require 'button'
-	local _event  = require 'clickhandler'
+	local _text    = require 'textbox'
+	local _button  = require 'button'
+	local _event   = require 'clickhandler'
 	local _tooltip = require 'tooltip'
 
 	local textbox_height
@@ -63,7 +63,8 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 
 	-- Initialize dialog components
 	textbox_height = _text.newTextBox(valueY, this.x + 5, this.y + 20, 67)
-	textbox_width  = _text.newTextBox(valueX, this.x + this.width - 72, this.y + 20, 67)
+	textbox_width  = _text.newTextBox(
+		valueX, this.x + this.width - 72, this.y + 20, 67)
 
 	button_confirm = _button.newButton(
 		'OK', this.x + 10, this.y + this.height - 30, this.width - 20)
@@ -94,7 +95,8 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 	-- Check the textbox values in real time
 	local function LiveChecker()
 		-- Enforce non-empty values
-		button_confirm.enabled = not (textbox_height.value == '' or textbox_width.value == '')
+		button_confirm.enabled =
+			not (textbox_height.value == '' or textbox_width.value == '')
 		tooltip_confirm.SetText((not button_confirm.enabled) and
 			'Grid height and width must not be empty.' or nil)
 		if not button_confirm.enabled then return end
