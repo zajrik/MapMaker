@@ -10,7 +10,7 @@ FILES=\
 	tooltip.lua\
 	toast.lua\
 	clickhandler.lua\
-	mapbuilder.lua\
+	mapeditor.lua\
 	pathchecker.lua\
 	mapexporter.lua\
 	icon.png\
