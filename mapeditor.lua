@@ -26,7 +26,6 @@ local MapMaker = {}; function MapMaker.newMapEditor(h, w)
 	local colors =
 	{
 		white  = {255, 255, 255},
-		gray   = {230, 230, 230},
 		black  = {0,   0,   0  },
 		yellow = {223, 229, 123},
 		green  = {0,   255, 0  },

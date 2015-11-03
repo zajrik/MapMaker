@@ -20,10 +20,6 @@ local colors =
 	white  = {255, 255, 255},
 	gray   = {230, 230, 230},
 	black  = {0,   0,   0  },
-	yellow = {223, 229, 123},
-	green  = {0,   255, 0  },
-
-	blank  = {0, 0, 0, 0}
 }
 
 local _settingsDialog = require 'settingsdialog'
@@ -40,9 +36,6 @@ local h, w
 local cellSize = 30
 
 local canvas_grid
-local canvas_activeCells
-local canvas_arrow
-local canvas_star
 
 local button_export
 local button_clear
@@ -57,24 +50,12 @@ local tooltip_export
 local settings
 local settingsSet
 
-local startY, startX, startSet
-local finishY, finishX, finishSet
-
-local clickY, clickX
-local rclickY, rclickX
-
-local map
 local editor
 local exporter
 
 -- Make number fit a map coord (1-index)
 local function ToMapCoord(number)
 	return math.floor((number / cellSize) + 1)
-end
-
--- Make number fit a grid coord (0-index)
-local function ToGridCoord(number)
-	return math.floor((number / cellSize))
 end
 
 -- Make a coord fit a cell
@@ -97,83 +78,8 @@ local function CheckMap()
 		exporter.validMap and nil or exporter.errorMessages[exporter.errorCode])
 end
 
--- -- Check if direction cell overwrites finish cell, overwrite it if so
--- -- Parameters must be map coordinates
--- local function CheckCell(y, x)
--- 	if y == finishY and x == finishX then
--- 		finishSet = false; finishY = 0; finishX = 0 end
--- end
---
--- -- Draw the chosen movement cell marker
--- local function MarkCell(dir, y, x)
--- 	-- Draw cell background
--- 	love.graphics.setColor((startX == x and startY == y and startSet) and
--- 		colors.blank or colors.yellow)
--- 	love.graphics.rectangle(
--- 		'fill', ToCell(x - 1), ToCell(y - 1), cellSize, cellSize)
--- 	love.graphics.setColor(colors.black)
---
--- 	-- TODO: Work out calculations for necessary translation
--- 	--       for a given rotation value rather than hardcoding
--- 	--       them
---
--- 	-- Draw cell markers
--- 	local cy, cx, r = y, x, 0
--- 	if     dir == '^' then cy, cx, r = y-1, x-1, 0
--- 	elseif dir == '>' then cy, cx, r = y-1, x,   90
--- 	elseif dir == 'v' then cy, cx, r = y,   x,   180
--- 	elseif dir == '<' then cy, cx, r = y,   x-1, 270
--- 	elseif dir == '*' then love.graphics.draw(
--- 		canvas_star, ToCell(cx - 1), ToCell(cy - 1)) end
--- 	if dir ~= '*' then love.graphics.draw(
--- 		canvas_arrow, ToCell(cx), ToCell(cy), math.rad(r)) end
--- end
---
--- -- Update the activeCells canvas and run the live map checker
--- local function UpdateCells()
---
--- 	canvas_activeCells:renderTo(function()
--- 		canvas_activeCells:clear()
--- 		-- Draw chosen start coord cell
--- 		if startSet then
--- 			love.graphics.setColor(colors.green)
--- 			love.graphics.rectangle('fill',
--- 				ToCell(ToGridCoord(clickX)),
--- 				ToCell(ToGridCoord(clickY)),
--- 				cellSize, cellSize)
--- 		end
---
--- 		-- Draw movement marker cells
--- 		for y = 1, #map do
--- 			for x = 1, #map[y] do
--- 				if map[y][x] ~= '.' then MarkCell(map[y][x], y, x) end
--- 			end
--- 		end
--- 	end)
---
--- 	exporter.LiveChecker(map, h, w, startY, startX, startSet, finishSet)
--- 	button_export.enabled = exporter.validMap
--- 	tooltip_export.SetText(
--- 		exporter.validMap and nil or exporter.errorMessages[exporter.errorCode])
---
--- end
-
 function love.load()
 	settingsSet = true
-
-	startY = 0
-	startX = 0
-	startSet = false
-
-	finishY = 0
-	finishX = 0
-	finishSet = false
-
-	clickY = 0
-	clickX = 0
-
-	rclickY = 0
-	rclickX = 0
 
 	settings = _settingsDialog.newSettingsDialog()
 
@@ -188,7 +94,11 @@ function love.load()
 	love.window.setMode(w * cellSize, (h * cellSize) + 52,
 		{display = display, x = winX, y = winY})
 
-	-- Bottom buttons
+	-- Create map editor and exporter instances
+	editor   = _mapEditor.newMapEditor(h, w)
+	exporter = _mapExporter.newMapExporter()
+
+	--  Create button instances
 	button_export = _button.newButton(
 		'Export', 0, ToCell(h) + 1, ToCell(w) / 2, false)
 	button_clear = _button.newButton(
@@ -196,7 +106,7 @@ function love.load()
 	button_settings = _button.newButton(
 		'Settings', 0, ToCell(h) + 27, ToCell(w))
 
-	-- Button click handlers
+	-- Create button click handlers
 	clickHandler_export =
 		_event.newClickHandler((
 			function()
@@ -219,23 +129,6 @@ function love.load()
 				settings.TabSelect()
 			end
 		))
-
-	-- TODO: Move map, active cells, cell marking/associated logic
-	--       and all map building controls to a separate class to
-	--       clean up main. It's gotten pretty cluttered.
-
-	-- Build empty map
-	map = {}
-	for y = 1, h do
-		map[y] = {}
-		for x = 1, w do
-			map[y][x] = '.'
-		end
-	end
-
-	-- Initialize map editor and map exporter
-	editor  = _mapEditor.newMapEditor(h, w)
-	exporter = _mapExporter.newMapExporter()
 
 	-- Initialize tooltips
 	tooltip_export = _tooltip.newTooltip(button_export)
@@ -261,25 +154,6 @@ function love.load()
 		end
 	end)
 
-	-- -- Prepare the canvas for active direction marker cells
-	-- canvas_activeCells = love.graphics.newCanvas(ToCell(w), ToCell(h))
-	--
-	-- -- Prepare the cell marker canvases and draw their markers
-	-- canvas_arrow = love.graphics.newCanvas(cellSize, cellSize)
-	-- canvas_arrow:renderTo(function()
-	-- 	love.graphics.setLineWidth(2)
-	-- 	love.graphics.setColor(colors.black)
-	-- 	love.graphics.line(8,16,  15,8,  22,16)
-	-- 	love.graphics.line(15,10,  15,22)
-	-- end)
-	-- canvas_star = love.graphics.newCanvas(cellSize, cellSize)
-	-- canvas_star:renderTo(function()
-	-- 	love.graphics.setLineWidth(2)
-	-- 	love.graphics.setColor(colors.black)
-	-- 	love.graphics.line(9,11,  21,19)
-	-- 	love.graphics.line(9,19,  21,11)
-	-- 	love.graphics.line(15,8,  15,22)
-	-- end)
 	CheckMap()
 end
 
@@ -299,10 +173,7 @@ function love.draw()
 	love.graphics.setColor(colors.white)
 	love.graphics.draw(canvas_grid, 0, 0)
 
-	-- -- Draw active direction cells canvas
-	-- love.graphics.setColor(colors.white)
-	-- love.graphics.draw(canvas_activeCells, 0, 0)
-
+	-- Draw editor content
 	editor.draw()
 
 	-- Draw bottom buttons
@@ -355,31 +226,20 @@ function love.mousepressed(x, y, button)
 	-- Pass mouse events to exporter for toast alerts
 	exporter.mousepressed(x, y, button)
 
-
 	-- Handle left click
 	if button == 'l' and not exporter.alertClick then
 		-- Pass mouse presses to settings dialog
 		settings.mousepressed(x, y, button)
+
 		if settingsSet then
 			-- Pass clicks to map editor
 			editor.mousepressed(x, y, button)
+			CheckMap()
 
 			-- Send out valid mouse events to buttons
 			button_export.mousepressed(x, y, button)
 			button_settings.mousepressed(x, y, button)
 			button_clear.mousepressed(x, y, button)
-
-			-- -- Clicked out of bounds
-			-- if x > w * cellSize
-			-- 	or y > (h * cellSize) - 1 then
-			--
-			-- -- Clicked grid
-			-- else clickX = x; clickY = y
-			-- 	startX = ToMapCoord(clickX)
-			-- 	startY = ToMapCoord(clickY)
-			-- 	startSet = true; editor.UpdateCells()
-			-- end
-			CheckMap()
 		end
 	end
 
@@ -388,30 +248,9 @@ function love.mousepressed(x, y, button)
 		if settingsSet then
 			-- Pass clicks to map editor
 			editor.mousepressed(x, y, button)
-			-- -- Clicked out of bounds
-			-- if x > w * cellSize
-			-- 	or y > (h * cellSize) - 1 then
-			--
-			-- -- Clicked grid
-			-- else rclickX = x; rclickY = y
-			-- 	-- Clicked the start cell, remove it
-			-- 	if ToMapCoord(x) == startX
-			-- 		and ToMapCoord(y) == startY
-			-- 			then startSet = false end
-			--
-			-- 	-- Clicked the finish cell, remove it
-			-- 	if ToMapCoord(x) == finishX
-			-- 		and ToMapCoord(y) == finishY
-			-- 			then finishSet = false end
-			--
-			-- 	-- Clicked any cell, remove it
-			-- 	map[ToMapCoord(rclickY)][ToMapCoord(rclickX)] = '.'
-			-- 	UpdateCells()
-			-- end
 			CheckMap()
 		end
 	end
-
 end
 
 -- Mouse released event listener
@@ -424,8 +263,7 @@ function love.mousereleased(x, y, button)
 			button_export.mousereleased(x, y, button, clickHandler_export)
 			button_settings.mousereleased(x, y, button, clickHandler_settings)
 			button_clear.mousereleased(x, y, button, clickHandler_clear)
-		end
-		if not settingsSet then
+		else
 			settings.mousereleased(x, y, button)
 		end
 	end
@@ -434,47 +272,18 @@ end
 -- Key press event listener
 function love.keypressed(key)
 	if settingsSet then
+		-- Pass keys to map editor
 		editor.keypressed(key)
-		-- local x, y = love.mouse.getPosition()
-		-- local validPos = true
-		--
-		-- if ToMapCoord(x) > w then validPos = false
-		-- else x = ToMapCoord(x) end
-		--
-		-- if ToMapCoord(y) > h then validPos = false
-		-- else y = ToMapCoord(y) end
-		--
-		-- if validPos then
-		-- 	if     key == 'w' then map[y][x] = '^'; CheckCell(y, x)
-		-- 	elseif key == 'd' then map[y][x] = '>'; CheckCell(y, x)
-		-- 	elseif key == 's' then map[y][x] = 'v'; CheckCell(y, x)
-		-- 	elseif key == 'a' then map[y][x] = '<'; CheckCell(y, x)
-		-- 	elseif key == 'x' then
-		-- 		if finishSet then
-		-- 			map[finishY][finishX] = '.'
-		-- 			map[y][x] = '*'
-		-- 			finishY = y
-		-- 			finishX = x
-		-- 		else
-		-- 			map[y][x] = '*'
-		-- 			finishY = y
-		-- 			finishX = x
-		-- 			finishSet = true
-		-- 		end
-		-- 	end
-		-- 	UpdateCells()
-		-- end
-
 		CheckMap()
 
-		if love.keyboard.isDown('lctrl') and key == 'g' then
-			debug = not debug end
-	end
-
-	-- Send keys to settings dialog
-	if not settingsSet then
+	else
+		-- Pass keys to settings dialog
 		settings.keypressed(key)
 	end
+
+	-- Activate debug info
+	if love.keyboard.isDown('lctrl') and key == 'g' then
+		debug = not debug end
 end
 
 -- Handle text input
