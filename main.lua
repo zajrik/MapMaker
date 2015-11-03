@@ -51,12 +51,22 @@ local editor
 local exporter
 local settings
 
-local mode
-local modes =
+local programMode
+local mode =
 {
 	EDITOR   = 1,
 	SETTINGS = 2
 }
+
+-- Return current mode of the program
+local function InMode(m)
+	return programMode == m
+end
+
+-- Set the current mode of the program
+local function SetMode(m)
+	programMode = m
+end
 
 -- Make number fit a map coord (1-index)
 local function ToMapCoord(number)
@@ -84,7 +94,7 @@ local function CheckMap()
 end
 
 function love.load()
-	mode = modes.EDITOR
+	SetMode(mode.EDITOR)
 
 	settings = _settingsDialog.newSettingsDialog()
 
@@ -129,7 +139,7 @@ function love.load()
 	clickHandler_settings =
 		_event.newClickHandler((
 			function()
-				mode = modes.SETTINGS
+				SetMode(mode.SETTINGS)
 				settings.settingsChosen = false
 				settings.TabSelect()
 			end
@@ -187,11 +197,11 @@ function love.draw()
 	button_clear.draw()
 
 	-- Add tooltips to view
-	if mode == modes.EDITOR then tooltip_export.Add() end
+	if InMode(mode.EDITOR) then tooltip_export.Add() end
 
 	-- Layer settings dialog on top, centered vertically/horizontally on grid
-	if settings.settingsChosen then mode = modes.EDITOR end
-	if mode == modes.SETTINGS then settings.Show() end
+	if settings.settingsChosen then SetMode(mode.EDITOR) end
+	if InMode(mode.SETTINGS) then settings.Show() end
 
 	-- Allow exporter to draw toasts
 	exporter.draw()
@@ -232,7 +242,7 @@ function love.mousepressed(x, y, button)
 		-- Pass mouse presses to settings dialog
 		settings.mousepressed(x, y, button)
 
-		if mode == modes.EDITOR then
+		if InMode(mode.EDITOR) then
 			-- Pass clicks to map editor
 			editor.mousepressed(x, y, button)
 			CheckMap()
@@ -246,7 +256,7 @@ function love.mousepressed(x, y, button)
 
 	-- Handle right click
 	if button == 'r' and not exporter.alertClick then
-		if mode == modes.EDITOR then
+		if InMode(mode.EDITOR) then
 			-- Pass clicks to map editor
 			editor.mousepressed(x, y, button)
 			CheckMap()
@@ -260,11 +270,11 @@ function love.mousereleased(x, y, button)
 	exporter.mousereleased(x, y, button)
 
 	if button == 'l' and not exporter.alertClick then
-		if mode == modes.EDITOR then
+		if InMode(mode.EDITOR) then
 			button_export.mousereleased(x, y, button, clickHandler_export)
 			button_settings.mousereleased(x, y, button, clickHandler_settings)
 			button_clear.mousereleased(x, y, button, clickHandler_clear)
-		elseif mode == modes.SETTINGS then
+		elseif InMode(mode.SETTINGS) then
 			settings.mousereleased(x, y, button)
 		end
 	end
@@ -272,12 +282,12 @@ end
 
 -- Key press event listener
 function love.keypressed(key)
-	if mode == modes.EDITOR then
+	if InMode(mode.EDITOR) then
 		-- Pass keys to map editor
 		editor.keypressed(key)
 		CheckMap()
 
-	elseif mode == modes.SETTINGS then
+	elseif InMode(mode.SETTINGS) then
 		-- Pass keys to settings dialog
 		settings.keypressed(key)
 	end
@@ -289,7 +299,7 @@ end
 
 -- Handle text input
 function love.textinput(text)
-	if mode == modes.SETTINGS then
+	if InMode(mode.SETTINGS) then
 		settings.textinput(text)
 	end
 end
