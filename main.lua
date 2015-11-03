@@ -17,9 +17,9 @@ love.graphics.setFont(font_regular)
 
 local colors =
 {
-	white  = {255, 255, 255},
-	gray   = {230, 230, 230},
-	black  = {0,   0,   0  },
+	white = {255, 255, 255},
+	gray  = {230, 230, 230},
+	black = {0,   0,   0  }
 }
 
 local _settingsDialog = require 'settingsdialog'
@@ -27,7 +27,7 @@ local _button         = require 'button'
 local _event          = require 'clickhandler'
 local _tooltip        = require 'tooltip'
 
-local _mapEditor  = require 'mapeditor'
+local _mapEditor   = require 'mapeditor'
 local _mapExporter = require 'mapexporter'
 
 local winX, winY, display
@@ -182,9 +182,9 @@ function love.draw()
 	editor.draw()
 
 	-- Draw bottom buttons
-	button_export.Show()
-	button_settings.Show()
-	button_clear.Show()
+	button_export.draw()
+	button_settings.draw()
+	button_clear.draw()
 
 	-- Add tooltips to view
 	if mode == modes.EDITOR then tooltip_export.Add() end

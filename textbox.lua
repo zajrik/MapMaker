@@ -34,7 +34,7 @@ local MapMaker = {}; function MapMaker.newTextBox(value, x, y, width)
 	end
 
 	-- Handle display of the text box
-	function this.Show()
+	function this.draw()
 		-- Draw border rectangle
 		love.graphics.setColor(this.selected and
 			colors.black or colors.border)

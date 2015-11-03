@@ -30,7 +30,7 @@ local MapMaker = {}; function MapMaker.newButton(text, x, y, width, enabled)
 	}
 
 	-- Handle display of the button
-	function this.Show()
+	function this.draw()
 		-- Draw button
 		love.graphics.setColor(this.active and
 			colors.bg_active or colors.bg_normal)

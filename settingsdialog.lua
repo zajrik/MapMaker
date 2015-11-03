@@ -147,8 +147,8 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 		love.graphics.print('Width', this.x + 89, this.y + 3)
 
 		-- Show text boxes and button
-		for i = 1, #textboxes do textboxes[i].Show() end
-		button_confirm.Show()
+		for i = 1, #textboxes do textboxes[i].draw() end
+		button_confirm.draw()
 
 		tooltip_confirm.Add()
 		LiveChecker()
