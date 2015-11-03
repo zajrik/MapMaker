@@ -34,7 +34,8 @@ local MapMaker = {}; function MapMaker.newButton(text, x, y, width, enabled)
 		-- Draw button
 		love.graphics.setColor(this.active and
 			colors.bg_active or colors.bg_normal)
-		love.graphics.rectangle('fill', this.x, this.y, this.width, this.height)
+		love.graphics.rectangle(
+			'fill', this.x, this.y, this.width, this.height)
 
 		-- Print text, centered on button
 		love.graphics.setColor(colors.white)
@@ -47,13 +48,17 @@ local MapMaker = {}; function MapMaker.newButton(text, x, y, width, enabled)
 		-- Draw disabled button overlay
 		if not this.enabled then
 			love.graphics.setColor(colors.overlay)
-			love.graphics.rectangle('fill', this.x, this.y, this.width, this.height)
+			love.graphics.rectangle(
+				'fill', this.x, this.y, this.width, this.height)
 		end
 	end
 
-	-- Check for button mouseover
-	local function Mouseover()
-		local mx, my = love.mouse.getPosition()
+	-- Check for button mouseover via current position
+	-- or position provided via method parameters
+	local function Mouseover(px, py)
+		local mx, my
+		if px and py then mx, my = px, py
+		else mx, my = love.mouse.getPosition() end
 		return  mx > this.x and my > this.y
 			and mx < this.x + this.width
 			and my < this.y + this.height
@@ -67,7 +72,7 @@ local MapMaker = {}; function MapMaker.newButton(text, x, y, width, enabled)
 	-- Handle mouse release,
 	function this.mousereleased(clickx, clicky, button, clickHandler)
 		this.active = false
-		if Mouseover() and this.enabled then
+		if Mouseover(clickx, clicky) and this.enabled then
 			(clickHandler)() end
 	end
 	return this
