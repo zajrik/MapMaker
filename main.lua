@@ -58,14 +58,14 @@ local mode =
 	SETTINGS = 2
 }
 
--- Return current mode of the program
-local function InMode(m)
-	return programMode == m
-end
-
 -- Set the current mode of the program
 local function SetMode(m)
 	programMode = m
+end
+
+-- Return current mode of the program
+local function InMode(m)
+	return programMode == m
 end
 
 -- Make number fit a map coord (1-index)
