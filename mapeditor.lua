@@ -105,20 +105,16 @@ local MapMaker = {}; function MapMaker.newMapEditor(h, w)
 			'fill', ToCell(x - 1), ToCell(y - 1), cellSize, cellSize)
 		love.graphics.setColor(colors.black)
 
-		-- TODO: Work out calculations for necessary translation
-		--       for a given rotation value rather than hardcoding
-		--       them
-
-		-- Draw cell markers
-		local cy, cx, r = y, x, 0
-		if     dir == '^' then cy, cx, r = y-1, x-1, 0
-		elseif dir == '>' then cy, cx, r = y-1, x,   90
-		elseif dir == 'v' then cy, cx, r = y,   x,   180
-		elseif dir == '<' then cy, cx, r = y,   x-1, 270
+		local r = 0
+		if     dir == '^' then r = 0
+		elseif dir == '>' then r = 90
+		elseif dir == 'v' then r = 180
+		elseif dir == '<' then r = 270
 		elseif dir == '*' then love.graphics.draw(
-			canvas_star, ToCell(cx - 1), ToCell(cy - 1)) end
+			canvas_star, ToCell(x - 1), ToCell(y - 1)) end
 		if dir ~= '*' then love.graphics.draw(
-			canvas_arrow, ToCell(cx), ToCell(cy), math.rad(r)) end
+			canvas_arrow, ToCell(x - .5), ToCell(y - .5), math.rad(r),
+			1, 1, cellSize / 2, cellSize / 2) end
 	end
 
 	-- Update the activeCells canvas
