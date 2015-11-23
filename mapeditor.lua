@@ -203,23 +203,19 @@ local MapMaker = {}; function MapMaker.newMapEditor(h, w)
 		else y = ToMapCoord(y) end
 
 		if validPos then
-			if     key == 'w' then this.map[y][x] = '^'; CheckCell(y, x)
-			elseif key == 'd' then this.map[y][x] = '>'; CheckCell(y, x)
-			elseif key == 's' then this.map[y][x] = 'v'; CheckCell(y, x)
-			elseif key == 'a' then this.map[y][x] = '<'; CheckCell(y, x)
+			if     key == 'w' then this.map[y][x] = '^'
+			elseif key == 'a' then this.map[y][x] = '<'
+			elseif key == 's' then this.map[y][x] = 'v'
+			elseif key == 'd' then this.map[y][x] = '>'
 			elseif key == 'x' then
 				if this.finishSet then
-					this.map[this.finishY][this.finishX] = '.'
-					this.map[y][x] = '*'
-					this.finishY = y
-					this.finishX = x
-				else
-					this.map[y][x] = '*'
-					this.finishY = y
-					this.finishX = x
-					this.finishSet = true
-				end
+					this.map[this.finishY][this.finishX] = '.' end
+				this.map[y][x] = '*'
+				this.finishY = y
+				this.finishX = x
+				this.finishSet = true
 			end
+			if key ~= 'x' then CheckCell(y, x) end
 			this.UpdateCells()
 		end
 	end

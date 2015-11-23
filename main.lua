@@ -158,8 +158,8 @@ function love.load()
 					love.graphics.setColor(x % 2 == 0 and
 						colors.gray or colors.white)
 				else
-					love.graphics.setColor(x % 2 ~= 0 and
-						colors.gray or colors.white)
+					love.graphics.setColor(x % 2 == 0 and
+						colors.white or colors.gray)
 				end
 				love.graphics.rectangle(
 					'fill', nextX , nextY, cellSize, cellSize)

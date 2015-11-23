@@ -18,15 +18,15 @@ local MapMaker = {}; function MapMaker.newMapExporter()
 	local _pathChecker  = require 'pathchecker'
 	local _clickHandler = require 'clickhandler'
 	local _toast        = require 'toast'
-	local toast_alert  = _toast.init()
+	local toast_alert   = _toast.init()
 
 	local clickHandler_toast
 
 	this.errorMessages =
 	{
 		'PathChecker could not find a valid direction path. '..
-		'Please make sure there is a complete path from start to '..
-		'finish.\n\nNote: Paths may not cross the same cell more than once.',
+		'Please make sure there is a complete path from start to finish.'..
+		'\n\nNote: Paths may not cross the same cell more than once.',
 		'You need to set a start direction before the map can be exported.',
 		'You need to set a start direction and a finish before the map can be exported.',
 		'You need to set a finish before the map can be exported.',
