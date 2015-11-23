@@ -35,7 +35,7 @@ local MapMaker = {}; function MapMaker.newMapEditor(h, w)
 
 	local cellSize = 30
 
-	local clickY, clickX   = 0, 0
+	local clickY,  clickX  = 0, 0
 	local rclickY, rclickX = 0, 0
 
 	local canvas_activeCells
@@ -155,7 +155,8 @@ local MapMaker = {}; function MapMaker.newMapEditor(h, w)
 		if button == 'l' then
 			-- Clicked out of bounds
 			if x > this.w * cellSize
-				or y > (this.h * cellSize) - 1 then
+				or y > (this.h * cellSize) - 1
+					then return
 
 			-- Clicked grid
 			else clickX = x; clickY = y
@@ -169,7 +170,8 @@ local MapMaker = {}; function MapMaker.newMapEditor(h, w)
 		if button == 'r' then
 			-- Clicked out of bounds
 			if x > w * cellSize
-				or y > (h * cellSize) - 1 then
+				or y > (h * cellSize) - 1
+					then return
 
 			-- Clicked grid
 			else rclickX = x; rclickY = y

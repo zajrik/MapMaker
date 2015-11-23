@@ -17,7 +17,7 @@ local MapMaker = {}; function MapMaker.newTextBox(value, x, y, width)
 
 	local utf8 = require 'utf8'
 	local font = love.graphics.newFont(14)
-	local timer = 0
+	local maxTimer, timer = 1.5, 0
 
 	local colors =
 	{
@@ -30,7 +30,7 @@ local MapMaker = {}; function MapMaker.newTextBox(value, x, y, width)
 	-- Update timer
 	function this.update(dt)
 		timer = timer + dt
-		if timer >= 1.5 then timer = 0 end
+		if timer >= maxTimer then timer = 0 end
 	end
 
 	-- Handle display of the text box
@@ -51,7 +51,7 @@ local MapMaker = {}; function MapMaker.newTextBox(value, x, y, width)
 		love.graphics.print(this.value, this.x + 3, this.y + 2)
 
 		-- Draw text cursor
-		if timer <= .75 and this.selected then love.graphics.print(
+		if timer <= maxTimer / 2 and this.selected then love.graphics.print(
 			'|', font:getWidth(this.value) + this.x + 2, this.y + 1) end
 	end
 
