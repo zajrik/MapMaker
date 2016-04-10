@@ -234,6 +234,10 @@ end
 
 -- Mouse pressed event listener
 function love.mousepressed(x, y, button)
+	-- Convert button int (love 0.10.0+) to MouseConstant
+	if     button == 1 then button = 'l'
+	elseif button == 2 then button = 'r' end
+
 	-- Pass mouse events to exporter for toast alerts
 	exporter.mousepressed(x, y, button)
 
@@ -266,6 +270,10 @@ end
 
 -- Mouse released event listener
 function love.mousereleased(x, y, button)
+	-- Convert button int (love 0.10.0+) to MouseConstant
+	if     button == 1 then button = 'l'
+	elseif button == 2 then button = 'r' end
+
 	-- Pass mouse events to exporter for toast alerts
 	exporter.mousereleased(x, y, button)
 

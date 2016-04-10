@@ -130,8 +130,8 @@ local MapMaker = {}; function MapMaker.newSettingsDialog()
 	-- Handle display of the dialog
 	function this.Show()
 		-- Get actual window height, width for UI darkening overlay
-		local winH = love.window.getHeight()
-		local winW = love.window.getWidth()
+		local winH = love.graphics.getHeight()
+		local winW = love.graphics.getWidth()
 
 		-- UI darken overlay
 		love.graphics.setColor(colors.overlay)

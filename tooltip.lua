@@ -78,6 +78,7 @@ local MapMaker = {}; function MapMaker.newTooltip(parent)
 		love.graphics.setFont(font_medium)
 
 		width, lines = font_medium:getWrap(this.text, maxWidth)
+		lines = #lines
 		height = font_medium:getHeight()
 
 		width = width + 6
@@ -87,7 +88,7 @@ local MapMaker = {}; function MapMaker.newTooltip(parent)
 		y = this.parent.y - (height + 5)
 
 		-- Enforce drawing within window bounds
-		local winW, winH = love.window.getDimensions()
+		local winW, winH = love.graphics.getDimensions()
 		x = InRange(x, 5, (winW - width) - 5)
 		y = InRange(y, 5, (winH - height) - 57)
 

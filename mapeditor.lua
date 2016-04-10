@@ -121,7 +121,8 @@ local MapMaker = {}; function MapMaker.newMapEditor(h, w)
 	function this.UpdateCells()
 
 		canvas_activeCells:renderTo(function()
-			canvas_activeCells:clear()
+			love.graphics.clear()
+
 			-- Draw chosen start coord cell
 			if this.startSet then
 				love.graphics.setColor(colors.green)
@@ -195,6 +196,7 @@ local MapMaker = {}; function MapMaker.newMapEditor(h, w)
 	-- Handle key press events
 	function this.keypressed(key)
 		-- Handle map move direction input keys
+		local validKeys = "[wasd]"
 		local x, y = love.mouse.getPosition()
 		local validPos = true
 
@@ -217,7 +219,8 @@ local MapMaker = {}; function MapMaker.newMapEditor(h, w)
 				this.finishX = x
 				this.finishSet = true
 			end
-			if key ~= 'x' then CheckCell(y, x) end
+
+			if string.match(key, validKeys) then CheckCell(y, x) end
 			this.UpdateCells()
 		end
 	end

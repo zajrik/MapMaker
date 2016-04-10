@@ -43,12 +43,13 @@ local MapMaker = {}; function MapMaker.newToast(text, clickHandler, duration)
 	love.graphics.setFont(font_medium)
 
 	width, lines = font_medium:getWrap(text, maxWidth)
+	lines = #lines
 	height = font_medium:getHeight()
 
 	width = width + 6
 	height = (height * lines) + 8
 
-	local winW, _ = love.window.getDimensions()
+	local winW, _ = love.graphics.getDimensions()
 	x = winW - width - 5
 	y = 5
 
