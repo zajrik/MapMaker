@@ -97,12 +97,23 @@ local MapMaker = {}; function MapMaker.newMapEditor(h, w)
 
 	-- Draw the chosen movement cell marker
 	local function MarkCell(dir, y, x)
+		-- Draw cell border
+		love.graphics.setColor(
+			(this.startX == x and this.startY == y and this.startSet) and
+				colors.blank or colors.black)
+		love.graphics.rectangle(
+			'fill', ToCell(x - 1) + 1, ToCell(y - 1) + 1,
+			cellSize - 2, cellSize - 2, 2)
+
 		-- Draw cell background
 		love.graphics.setColor(
 			(this.startX == x and this.startY == y and this.startSet) and
 				colors.blank or colors.yellow)
 		love.graphics.rectangle(
-			'fill', ToCell(x - 1), ToCell(y - 1), cellSize, cellSize)
+			'fill', ToCell(x - 1) + 2, ToCell(y - 1) + 2,
+			cellSize - 4, cellSize - 4, 2)
+
+		-- Draw cell marker icon
 		love.graphics.setColor(colors.black)
 
 		local r = 0
@@ -125,11 +136,16 @@ local MapMaker = {}; function MapMaker.newMapEditor(h, w)
 
 			-- Draw chosen start coord cell
 			if this.startSet then
+				love.graphics.setColor(colors.black)
+				love.graphics.rectangle('fill',
+					ToCell(ToGridCoord(clickX)) + 1,
+					ToCell(ToGridCoord(clickY)) + 1,
+					cellSize - 2, cellSize - 2, 2)
 				love.graphics.setColor(colors.green)
 				love.graphics.rectangle('fill',
-					ToCell(ToGridCoord(clickX)),
-					ToCell(ToGridCoord(clickY)),
-					cellSize, cellSize)
+					ToCell(ToGridCoord(clickX)) + 2,
+					ToCell(ToGridCoord(clickY)) + 2,
+					cellSize - 4, cellSize - 4, 2)
 			end
 
 			-- Draw movement marker cells
