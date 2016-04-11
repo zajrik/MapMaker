@@ -143,7 +143,7 @@ local MapMaker = {}; function MapMaker.newToast(text, clickHandler, duration)
 	return this
 end
 
--- Return an empty class containing blank methods with init(). This allows then
+-- Return an empty class containing blank methods with init(). This allows the
 -- recyclable toast object to be initialized so that it can be added to
 -- love.draw/update/etc without causing crashes, effectively serving as a
 -- placeholder until the object is instantiated with newToast()
