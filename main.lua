@@ -1,4 +1,3 @@
-io.stdout:setvbuf('no')
 love.window.setTitle('Map Maker')
 
 local debug = false
@@ -220,6 +219,18 @@ function love.draw()
 		love.graphics.print(
 			'Lua Memory Usage: '..string.format('%d',debug_mem)..' KB', 5, 3)
 		love.graphics.print('FPS: '..debug_fps, 5, 13)
+
+		-- Draw path highlight data
+		local pathlines = ''
+		local dx, dy = 1, 1
+		for dy = 1, #editor.path do
+			for dx = 1, #editor.path[dy] do
+				pathlines = pathlines .. editor.path[dy][dx]
+			end
+			pathlines = pathlines .. '\n'
+		end
+
+		love.graphics.print('Path: \n'..pathlines, 5, 23)
 		love.graphics.setFont(font_regular)
 
 		-- Update debug information

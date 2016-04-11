@@ -9,6 +9,7 @@ local MapMaker = {}; function MapMaker.newMapEditor(h, w)
 	local this =
 	{
 		map = {},
+		path = {},
 
 		h = h,
 		w = w,
@@ -23,12 +24,15 @@ local MapMaker = {}; function MapMaker.newMapEditor(h, w)
 		finishX = 0
 	}
 
+	local _pathHighlight  = require 'pathhighlighter'
+
 	local colors =
 	{
 		white  = {255, 255, 255},
 		black  = {0,   0,   0  },
 		yellow = {223, 229, 123},
 		green  = {0,   255, 0  },
+		orange = {255, 165, 0  },
 
 		blank  = {0, 0, 0, 0}
 	}
@@ -98,9 +102,7 @@ local MapMaker = {}; function MapMaker.newMapEditor(h, w)
 	-- Draw the chosen movement cell marker
 	local function MarkCell(dir, y, x)
 		-- Draw cell border
-		love.graphics.setColor(
-			(this.startX == x and this.startY == y and this.startSet) and
-				colors.blank or colors.black)
+		love.graphics.setColor(colors.black)
 		love.graphics.rectangle(
 			'fill', ToCell(x - 1) + 1, ToCell(y - 1) + 1,
 			cellSize - 2, cellSize - 2, 2)
@@ -108,7 +110,7 @@ local MapMaker = {}; function MapMaker.newMapEditor(h, w)
 		-- Draw cell background
 		love.graphics.setColor(
 			(this.startX == x and this.startY == y and this.startSet) and
-				colors.blank or colors.yellow)
+				colors.orange or colors.yellow)
 		love.graphics.rectangle(
 			'fill', ToCell(x - 1) + 2, ToCell(y - 1) + 2,
 			cellSize - 4, cellSize - 4, 2)
@@ -132,7 +134,24 @@ local MapMaker = {}; function MapMaker.newMapEditor(h, w)
 	function this.UpdateCells()
 
 		canvas_activeCells:renderTo(function()
+			-- Draw path highlighting
 			love.graphics.clear()
+			if this.startSet then
+				local highlight = _pathHighlight.newPathHighlighter(
+					this.h, this.w, this.startY or 1, this.startX or 1)
+				this.path = highlight.HighlightPath(this.map)
+
+				for y = 1, #this.path do
+					for x = 1, #this.path[y] do
+						if this.path[y][x] == 1 then
+							love.graphics.setColor(colors.green)
+							love.graphics.rectangle(
+								'fill', ToCell(x - 1), ToCell(y - 1),
+								cellSize, cellSize)
+						end
+					end
+				end
+			end
 
 			-- Draw chosen start coord cell
 			if this.startSet then
@@ -141,7 +160,7 @@ local MapMaker = {}; function MapMaker.newMapEditor(h, w)
 					ToCell(ToGridCoord(clickX)) + 1,
 					ToCell(ToGridCoord(clickY)) + 1,
 					cellSize - 2, cellSize - 2, 2)
-				love.graphics.setColor(colors.green)
+				love.graphics.setColor(colors.orange)
 				love.graphics.rectangle('fill',
 					ToCell(ToGridCoord(clickX)) + 2,
 					ToCell(ToGridCoord(clickY)) + 2,
