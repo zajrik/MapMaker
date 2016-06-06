@@ -12,6 +12,7 @@ FILES=\
 	clickhandler.lua\
 	mapeditor.lua\
 	pathchecker.lua\
+	pathhighlighter.lua\
 	mapexporter.lua\
 	icon.png\
 
